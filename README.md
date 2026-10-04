@@ -17,3 +17,5 @@ This is the rewrite of SyanicLauncher in GoLang with Wails from scratch while us
 Old SyanicLauncher was written in Python + Electron and was totally unmaintainable with a monolithic codebase.
 
 There were occasional issues with the launcher not working as expected, issues with python itself, compilation times, size of the compiled artifact due to bundled electron and python making it unpleasing and unperformative.
+
+GoLang + Wails + Vanilla HTML/CSS/JS is a much better combination for a modern, maintainable launcher without compromising and would also help me get better at GoLang.
