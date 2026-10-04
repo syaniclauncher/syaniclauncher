@@ -1,3 +1,4 @@
+// SPA Handler :)
 const route = (event) => {
     event = event || window.event;
     event.preventDefault();
@@ -6,11 +7,13 @@ const route = (event) => {
 };
 
 const routes = {
-    404: "/pages/404.html",
-    "/": "/pages/index.html",
-    "/about": "/pages/about.html",
-    "/lorem": "/pages/lorem.html",
-};
+    404: './pages/404.html',
+    "/": './pages/home.html',
+    "/instances": './pages/instances.html',
+    "/public-servers": './pages/public-servers.html',
+    "/performance": './pages/performance.html',
+    "/settings": './pages/settings.html',
+}
 
 const handleLocation = async () => {
     const path = window.location.pathname;

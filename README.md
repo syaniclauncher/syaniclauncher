@@ -1,19 +1,19 @@
-# README
+## SyanicLauncher (work in progress)
+This is the rewrite of SyanicLauncher in GoLang with Wails from scratch while using Vanilla HTML/CSS/JS for the frontend.
 
-## About
+#### todos:
+- Build a decent frontend
+- Go Package for Minecraft Go from scratch (pain)
+- Support for various Minecraft modloaders
 
-This is the official Wails Vanilla template.
+#### rules:
+- Readable and maintainable code
+- Avoid AI slop in backend, can be only used in making frontend designs
 
-You can configure the project by editing `wails.json`. More information about the project settings can be found
-here: https://wails.io/docs/reference/project-config
+#### preview of old SyanicLauncher:
+![Syanic Launcher](.github/readme-images/old-syaniclauncher.png)
 
-## Live Development
+#### why?
+Old SyanicLauncher was written in Python + Electron and was totally unmaintainable with a monolithic codebase.
 
-To run in live development mode, run `wails dev` in the project directory. This will run a Vite development
-server that will provide very fast hot reload of your frontend changes. If you want to develop in a browser
-and have access to your Go methods, there is also a dev server that runs on http://localhost:34115. Connect
-to this in your browser, and you can call your Go code from devtools.
-
-## Building
-
-To build a redistributable, production mode package, use `wails build`.
+There were occasional issues with the launcher not working as expected, issues with python itself, compilation times, size of the compiled artifact due to bundled electron and python making it unpleasing and unperformative.
