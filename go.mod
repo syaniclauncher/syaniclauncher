@@ -1,4 +1,4 @@
-module myproject
+module syaniclauncher
 
 go 1.25.0
 
