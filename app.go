@@ -21,7 +21,8 @@ func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 }
 
-// Greet returns a greeting for the given name
-func (a *App) Greet(name string) string {
-	return fmt.Sprintf("Hello %s, It's show time!", name)
+// CheckConnection function to check connection between backend and frontend
+func (a *App) CheckConnection() string {
+	fmt.Println("Connection Check Recived")
+	return fmt.Sprintln("Absolute good :)")
 }
