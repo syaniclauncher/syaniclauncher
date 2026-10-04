@@ -1,43 +1,25 @@
-import './style.css';
-import './app.css';
-
-import logo from './assets/images/logo-universal.png';
-import {Greet} from '../wailsjs/go/main/App';
-
-document.querySelector('#app').innerHTML = `
-    <img id="logo" class="logo">
-      <div class="result" id="result">Please enter your name below 👇</div>
-      <div class="input-box" id="input">
-        <input class="input" id="name" type="text" autocomplete="off" />
-        <button class="btn" onclick="greet()">Greet</button>
-      </div>
-    </div>
-`;
-document.getElementById('logo').src = logo;
-
-let nameElement = document.getElementById("name");
-nameElement.focus();
-let resultElement = document.getElementById("result");
-
-// Setup the greet function
-window.greet = function () {
-    // Get name
-    let name = nameElement.value;
-
-    // Check if the input is empty
-    if (name === "") return;
-
-    // Call App.Greet(name)
-    try {
-        Greet(name)
-            .then((result) => {
-                // Update result with data back from App.Greet()
-                resultElement.innerText = result;
-            })
-            .catch((err) => {
-                console.error(err);
-            });
-    } catch (err) {
-        console.error(err);
-    }
+const route = (event) => {
+    event = event || window.event;
+    event.preventDefault();
+    window.history.pushState({}, "", event.target.href);
+    handleLocation();
 };
+
+const routes = {
+    404: "/pages/404.html",
+    "/": "/pages/index.html",
+    "/about": "/pages/about.html",
+    "/lorem": "/pages/lorem.html",
+};
+
+const handleLocation = async () => {
+    const path = window.location.pathname;
+    const route = routes[path] || routes[404];
+    const html = await fetch(route).then((data) => data.text());
+    document.getElementById("main-page").innerHTML = html;
+};
+
+window.onpopstate = handleLocation;
+window.route = route;
+
+handleLocation();

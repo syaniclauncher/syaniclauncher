@@ -18,13 +18,13 @@ func main() {
 	// Create application with options
 	err := wails.Run(&options.App{
 		Title:  "Syanic Launcher",
-		Width:  1024,
-		Height: 768,
+		Width:  1300,
+		Height: 750,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
-		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
-		OnStartup:        app.startup,
+		//BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
+		OnStartup: app.startup,
 		Bind: []interface{}{
 			app,
 		},
