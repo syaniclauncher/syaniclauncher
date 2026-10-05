@@ -3,6 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
+	"syaniclauncher/src/config"
+	"syaniclauncher/src/helpers"
+
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 // Wails default stuff
@@ -16,16 +20,21 @@ func NewApp() *App {
 
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
-	// put init here (will be commited soon)
+	helpers.SetContext(a.ctx) // make ctx global
+
+	cfg, err := config.InitConfig() // initialize config
+	_ = cfg                         //ignored
+	if err != nil {                 // if any issue
+		config.BackendReady = false
+		runtime.Quit(ctx) // close app
+		return
+	}
+
+	config.BackendReady = true
 }
 
 func (a *App) IsBackendReady() bool { // first letter must be cap btw to register
-	// check if init checks are completed via a global variable ig
-	// send false if init checks not done, true if done
-
-	// frontend would loop until backendReady event is received
-	// or maybe close the app if error? that would be somewhere else
-	return true
+	return config.BackendReady
 }
 
 // test: CheckConnection function to check connection between backend and frontend
