@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="./global.css">
 </head>
 <body>
+    <div id="overlay">
+        <img src="assets/logo.png" alt="syaniclauncher logo">
+    </div>
     <div id="root">
         <nav id="main-nav" class="sidebar">
             <a href="/" onclick="route()">Play Game</a>
@@ -19,7 +22,10 @@
     </div>
 
     <!-- spa router module btw -->
-    <script src="src/handler.js" type="module"></script>
+    <script src="src/handlerSPA.js" type="module"></script>
+
+    <!-- hides splash screen (when backend is ready) -->
+    <script src="src/initSplash.js" type="module"></script>
 
     <!-- optional: connection test module -->
     <script src="src/test.js" type="module"></script>

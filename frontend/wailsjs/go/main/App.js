@@ -5,3 +5,7 @@
 export function CheckConnection() {
   return window['go']['main']['App']['CheckConnection']();
 }
+
+export function IsBackendReady() {
+  return window['go']['main']['App']['IsBackendReady']();
+}
