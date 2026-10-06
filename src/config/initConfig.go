@@ -3,7 +3,6 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 	"syaniclauncher/src/helpers"
@@ -45,11 +44,11 @@ func quarantine(configPath string) {
 	backupPath := configPath + ".corrupt"
 
 	if err := os.Rename(configPath, backupPath); err != nil {
-		log.Println("[WARN] config: could not keep corrupted file:", err)
+		helpers.WarnLauncherLog(fmt.Sprintf("[CONFIG-INIT] could not keep corrupted file: %v", err))
 		return
 	}
 
-	log.Println("[WARN] config: corrupted, previous file kept at", backupPath)
+	helpers.WarnLauncherLog(fmt.Sprintf("[CONFIG-INIT] corrupted, previous file kept at %s", backupPath))
 }
 
 // usableAppDir reports whether dir is an absolute path we can actually use & creating it if missing
@@ -101,7 +100,7 @@ func InitConfig() (*Config, error) {
 	// note: paths are saved with double slashes like ("G:\\test"), otherwise it decodes
 	// to something else (eg. "\t" is a tab)
 	if config.AppDirectory != "" && !usableAppDir(config.AppDirectory) {
-		helpers.WarnLauncherLog(fmt.Sprintf("[WARN] [CONFIG-INIT] unusable app_dir %q, falling back to default", config.AppDirectory))
+		helpers.WarnLauncherLog(fmt.Sprintf("[CONFIG-INIT] unusable app_dir %q, falling back to default", config.AppDirectory))
 		config.AppDirectory = ""
 	}
 
@@ -119,6 +118,6 @@ func InitConfig() (*Config, error) {
 		AppDir = config.AppDirectory
 	}
 
-	helpers.LauncherLog("[DEBUG] AppDir is set to: " + AppDir)
+	helpers.LauncherLog("AppDir is set to: " + AppDir)
 	return &config, nil
 }
