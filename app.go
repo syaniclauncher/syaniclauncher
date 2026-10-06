@@ -39,6 +39,6 @@ func (a *App) IsBackendReady() bool { // first letter must be cap btw to registe
 
 // test: CheckConnection function to check connection between backend and frontend
 func (a *App) CheckConnection() string {
-	fmt.Println("Connection Check Recived")
+	fmt.Println("[DEBUG] Frontend connection check recived")
 	return fmt.Sprintln("Absolute good :)")
 }
