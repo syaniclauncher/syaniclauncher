@@ -42,3 +42,7 @@ func (a *App) CheckConnection() string {
 	fmt.Println("[DEBUG] Frontend connection check recived")
 	return fmt.Sprintln("Absolute good :)")
 }
+
+func (a *App) BrowserOpenURL(url string) {
+	runtime.BrowserOpenURL(a.ctx, url)
+}
