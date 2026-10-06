@@ -2,6 +2,9 @@ package main
 
 import (
 	"embed"
+	"flag"
+
+	"syaniclauncher/src/helpers"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -13,6 +16,10 @@ var assets embed.FS
 
 func main() {
 	app := NewApp()
+
+	// bind debug flag to DebugMode
+	flag.BoolVar(&helpers.DebugMode, "debug", false, "Enable debug mode")
+	flag.Parse()
 
 	err := wails.Run(&options.App{
 		Title:  "Syanic Launcher",

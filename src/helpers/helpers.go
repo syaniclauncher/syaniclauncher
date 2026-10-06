@@ -9,24 +9,28 @@ import (
 
 // make ctx available globally
 var appContext context.Context
+var DebugMode bool
 
 func SetContext(ctx context.Context) {
 	appContext = ctx
 }
 
 func LauncherLog(msg string) {
-	// todo: add debug check
-	log.Println(msg)
+	if DebugMode {
+		log.Println("[INFO] " + msg)
+	}
 }
 
 func WarnLauncherLog(msg string) {
-	// todo: add debug check
-	log.Println()
+	if DebugMode {
+		log.Println("[WARN] " + msg)
+	}
 }
 
 func FatalLauncherLog(err error) {
-	// todo: add debug check
-	log.Fatal(err)
+	if DebugMode {
+		log.Fatal(err)
+	}
 }
 
 // error dialog
