@@ -1,4 +1,4 @@
-import { renderHomeNews, stopHomeNews } from "./homePage/handlerNews";
+import { renderHomeNews, stopHomeNews } from "./homePage/handlerNews.js";
 
 let currentRoute = "/";
 let activePage;

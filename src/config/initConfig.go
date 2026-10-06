@@ -25,6 +25,9 @@ func DefaultConfig() Config {
 	}
 }
 
+// todo: function that only updates single config value
+// ...
+
 // write saves config to path, creating the file if needed
 func write(path string, cfg Config) error {
 	data, err := json.Marshal(cfg)

@@ -1,4 +1,4 @@
-import { BrowserOpenURL } from "../wailsjs/runtime/runtime.js";
+import { BrowserOpenURL } from "../../wailsjs/runtime/runtime.js";
 
 let news;
 let newsIndex = 0;
