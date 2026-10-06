@@ -1,4 +1,4 @@
-import { renderHomeNews, stopHomeNews } from "./handlerNews.js";
+import { renderHomeNews, stopHomeNews } from "./homePage/handlerNews";
 
 let currentRoute = "/";
 let activePage;
@@ -36,7 +36,7 @@ const handleLocation = async () => {
         throw new Error(`Failed to load page ${page.template}: HTTP ${response.status}`);
     }
 
-    const content = await response.text();   
+    const content = await response.text();
     if (navigation !== navigationId) return; // ignore old navigation if another one started
     activePage?.onLeave?.();
     document.getElementById("main-page").innerHTML = content;
