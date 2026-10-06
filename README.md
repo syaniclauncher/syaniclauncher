@@ -8,13 +8,21 @@ This is the rewrite of SyanicLauncher in GoLang with Wails from scratch while us
 
 #### rules:
 - Readable and maintainable code
-- Avoid AI slop in backend, can be only used in making frontend designs
+- Avoid AI slop, can be only used in making frontend designs, that too must also have taste and not be slopped & maintainable
 
 #### preview of old SyanicLauncher:
 ![Syanic Launcher](.github/readme-images/old-syaniclauncher.png)
 
 #### why?
 Old SyanicLauncher was written in Python + Electron and was totally unmaintainable with a monolithic codebase.
+
+<details>
+<summary>(Click to preview)</summary>
+
+![Old Monolith Code](.github/readme-images/old-monolith.png)
+<p style="text-align: center; font-size: 0.8rem; font-style: italic;">yeah this shi was a mess</p>
+
+</details>
 
 There were occasional issues with the launcher not working as expected, issues with python itself, compilation times, size of the compiled artifact due to bundled electron and python making it unpleasing and unperformative.
 
