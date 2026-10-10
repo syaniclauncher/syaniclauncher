@@ -1,5 +1,5 @@
 // test: Check connection to backend
-import { CheckConnection } from '../wailsjs/go/main/App.js';
+import { CheckConnection } from '../wailsjs/go/app/App.js';
 
 async function verifyBackendConnection() {
     try {

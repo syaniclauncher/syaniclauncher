@@ -1,6 +1,6 @@
 // checks if the backend is ready
 // hides overlay after that
-import { IsBackendReady } from "../wailsjs/go/main/App.js";
+import { IsBackendReady } from "../wailsjs/go/app/App.js";
 
 async function checkBackend() {
     try {

@@ -4,6 +4,7 @@ import (
 	"embed"
 	"flag"
 
+	"syaniclauncher/app"
 	"syaniclauncher/src/helpers"
 
 	"github.com/wailsapp/wails/v2"
@@ -15,10 +16,10 @@ import (
 var assets embed.FS
 
 func main() {
-	app := NewApp()
+	app := app.NewApp()
 
 	// bind debug flag to DebugMode
-	flag.BoolVar(&helpers.DebugMode, "debug", false, "Enable debug mode")
+	flag.BoolVar(&helpers.DebugMode, "debug", true, "Enable debug mode") // true for now
 	flag.Parse()
 
 	err := wails.Run(&options.App{
@@ -29,7 +30,7 @@ func main() {
 			Assets: assets,
 		},
 		BackgroundColour: &options.RGBA{R: 10, G: 10, B: 10, A: 1}, //#0a0a0a
-		OnStartup:        app.startup,
+		OnStartup:        app.Startup,
 		Bind: []interface{}{
 			app,
 		},

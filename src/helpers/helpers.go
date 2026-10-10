@@ -7,7 +7,6 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-// make ctx available globally
 var DebugMode bool
 
 func LauncherLog(msg string) {
