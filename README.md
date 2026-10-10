@@ -20,6 +20,7 @@ Old SyanicLauncher was written in Python + Electron and was totally unmaintainab
 <summary>(Click to preview)</summary>
 
 ![Old Monolith Code](.github/readme-images/old-monolith.png)
+
 <p style="text-align: center; font-size: 0.8rem; font-style: italic;">yeah this shi was a mess</p>
 
 </details>
@@ -27,3 +28,9 @@ Old SyanicLauncher was written in Python + Electron and was totally unmaintainab
 There were occasional issues with the launcher not working as expected, issues with python itself, compilation times, size of the compiled artifact due to bundled electron and python making it unpleasing and unperformative.
 
 GoLang + Wails + Vanilla HTML/CSS/JS is a much better combination for a modern, maintainable launcher without compromising and would also help me get better at GoLang.
+
+### commands:
+For development: `wails dev`
+For building: `wails build`
+
+Go and required dependencies must be installed.
