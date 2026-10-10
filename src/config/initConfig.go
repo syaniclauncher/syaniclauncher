@@ -1,6 +1,7 @@
 package config
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -60,11 +61,11 @@ func usableAppDir(dir string) bool {
 	return os.MkdirAll(dir, 0755) == nil
 }
 
-func InitConfig() (*Config, error) {
+func InitConfig(appContext context.Context) (*Config, error) {
 	appData, err := os.UserConfigDir()
 
 	if err != nil {
-		helpers.ShowError("Unable to get APPDATA directory.")
+		helpers.ShowError(appContext, "Unable to get APPDATA directory.")
 		return nil, err
 	}
 
@@ -75,7 +76,7 @@ func InitConfig() (*Config, error) {
 
 	// create directory if missing
 	if err = os.MkdirAll(defaultAppDir, 0755); err != nil {
-		helpers.ShowError("Unable to create default app directory.")
+		helpers.ShowError(appContext, "Unable to create default app directory.")
 		return nil, err
 	}
 
@@ -106,7 +107,7 @@ func InitConfig() (*Config, error) {
 
 	// finally write the config after all this
 	if err := write(configPath, config); err != nil {
-		helpers.ShowError("Unable to update default config.")
+		helpers.ShowError(appContext, "Unable to update default config.")
 		helpers.FatalLauncherLog(err)
 		return nil, err
 	}

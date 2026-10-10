@@ -9,6 +9,8 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
+var appContext context.Context
+
 // Wails default stuff
 type App struct {
 	ctx context.Context
@@ -20,11 +22,11 @@ func NewApp() *App {
 
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
-	helpers.SetContext(a.ctx) // make ctx global
+	appContext = a.ctx
 
-	cfg, err := config.InitConfig() // initialize config
-	_ = cfg                         //ignored
-	if err != nil {                 // if any issue
+	cfg, err := config.InitConfig(appContext) // initialize config
+	_ = cfg                                   //ignored
+	if err != nil {                           // if any issue
 		config.BackendReady = false
 		runtime.Quit(ctx) // close app
 		return

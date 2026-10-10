@@ -8,12 +8,7 @@ import (
 )
 
 // make ctx available globally
-var appContext context.Context
 var DebugMode bool
-
-func SetContext(ctx context.Context) {
-	appContext = ctx
-}
 
 func LauncherLog(msg string) {
 	if DebugMode {
@@ -34,7 +29,7 @@ func FatalLauncherLog(err error) {
 }
 
 // error dialog
-func ShowError(message string) {
+func ShowError(appContext context.Context, message string) {
 	runtime.MessageDialog(appContext, runtime.MessageDialogOptions{
 		Type:    runtime.ErrorDialog,
 		Title:   "Error",
