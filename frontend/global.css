@@ -32,7 +32,7 @@
     --launch-button-bg-color: #ff4147;
 }
 
-html,body { font-family: sans-serif; margin: 0; height: 100%; color: var(--text-color); background-color: var(--bg-color); }
+html,body { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Oxygen, Ubuntu, Roboto, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif; margin: 0; height: 100%; color: var(--text-color); background-color: var(--bg-color); }
 p { margin-block-start: 0; text-indent: 1rem; }
 hr { border: none; height: 1px; background-color: var(--gray-color); width: 40px; margin: 1.5rem 0 1rem 0; }
 #root { display: flex; height: 100%; }
@@ -60,7 +60,7 @@ hr { border: none; height: 1px; background-color: var(--gray-color); width: 40px
 .launch-selection-copy { display: flex; flex: 1; flex-direction: column; gap: 0.15rem; min-width: 0; }
 .launch-selection-title, .launch-selection-detail { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .launch-selection-title { font-size: 0.875rem; font-weight: 600; }
-.launch-selection-detail { color: var(--text-muted-color); font-size: 0.75rem; }
+.launch-selection-detail { color: var(--text-muted-color); font-size: 0.75rem; opacity: 0.58; }
 .launch-chevron { flex: 0 0 16px; width: 16px; height: 16px; fill: none; stroke: var(--launch-chevron-color); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
 .launch-actions { display: flex; align-items: center; gap: 0.75rem; margin-left: auto; }
 .launch-folder, .launch-game { box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; height: 48px; border: 0; border-radius: 7px; color: var(--text-color); cursor: pointer; }
@@ -90,7 +90,7 @@ hr { border: none; height: 1px; background-color: var(--gray-color); width: 40px
 .news-card-sep { color: var(--text-dim-color); font-size: 0.7rem; }
 .news-card-date { color: var(--text-subtle-color); font-size: 0.75rem; }
 .news-card-title { margin: 0; font-size: 1.3rem; }
-.news-card-text { margin: 0; color: rgba(var(--text-color), 0.58); font-size: 0.875rem; line-height: 1.5; text-indent: 0; }
+.news-card-text { margin: 0; color: rgba(var(--text-color), 0.58); font-size: 0.875rem; line-height: 1.5; text-indent: 0; opacity: 0.58; }
 .news-card-more { align-self: flex-start; display: inline-flex; align-items: center; gap: 0.4rem; margin-top: 0.15rem; padding: 0; border: 0; background: transparent; color: var(--accent-color); font: inherit; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
 .news-card-more:hover { text-decoration: underline; }
 .news-nav { position: absolute; top: 50%; z-index: 1; display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; padding: 0; transform: translateY(-50%); border: 0; border-radius: 50%; background: var(--control-overlay-color); color: var(--text-color); font-size: 1.2rem; cursor: pointer; opacity: 0; transition: opacity 0.15s ease, background 0.15s ease; }
