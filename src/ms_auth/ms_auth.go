@@ -49,6 +49,7 @@ func StartMicrosoftBrowserAuth() (string, <-chan AuthResult, error) {
 	mux := http.NewServeMux()
 	server := &http.Server{Handler: mux}
 
+	mux.HandleFunc("/", pageDefault)
 	mux.HandleFunc("/auth_callback", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Query().Get("state") != state {
 			http.Error(w, "Invalid OAuth state", http.StatusBadRequest)
@@ -66,7 +67,7 @@ func StartMicrosoftBrowserAuth() (string, <-chan AuthResult, error) {
 			http.Error(w, "Token exchange failed", http.StatusBadGateway)
 			result <- AuthResult{Err: err}
 		} else {
-			fmt.Fprintln(w, "Authentication successful! You can close this window.")
+			http.Redirect(w, r, "https://syaniclauncher.github.io/auth_success", http.StatusFound) //redirect to hide code in browser
 			result <- token
 		}
 
@@ -93,6 +94,10 @@ func StartMicrosoftBrowserAuth() (string, <-chan AuthResult, error) {
 	}()
 
 	return authURL, result, nil
+}
+
+func pageDefault(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, `<body style="margin:0;height:100vh;display:grid;place-content:center;text-align:center;background:#000;color:#fff;font:14px/1.5 system-ui,sans-serif"><img src="https://syaniclauncher.github.io/misc/ourport.png" style="max-width:90vw;max-height:80vh"><small style="color:#aaa;letter-spacing:.3px">This port is temporarily used for ms oauth</small>`)
 }
 
 type tokenResponse struct {
