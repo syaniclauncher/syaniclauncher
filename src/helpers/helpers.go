@@ -35,3 +35,7 @@ func ShowError(appContext context.Context, message string) {
 		Message: message,
 	})
 }
+
+func OpenInBrowser(appContext context.Context, url string) {
+	runtime.BrowserOpenURL(appContext, url)
+}

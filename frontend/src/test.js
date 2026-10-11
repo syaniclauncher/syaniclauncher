@@ -11,3 +11,6 @@ async function verifyBackendConnection() {
 }
 
 verifyBackendConnection();
+
+/*import { AddMicrosoftAccount } from '../wailsjs/go/app/App.js';
+await AddMicrosoftAccount();*/

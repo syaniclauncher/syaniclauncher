@@ -3,8 +3,6 @@ package app
 import (
 	"fmt"
 	"syaniclauncher/src/helpers"
-
-	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 // dev: checkConnection function to check connection between backend and frontend
@@ -14,5 +12,5 @@ func (a *App) CheckConnection() string {
 }
 
 func (a *App) BrowserOpenURL(url string) {
-	runtime.BrowserOpenURL(a.ctx, url)
+	helpers.OpenInBrowser(a.ctx, url)
 }
