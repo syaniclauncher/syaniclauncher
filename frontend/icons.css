@@ -13,3 +13,6 @@
 .icon-rocket { --icon: url("/icons/rocket.svg"); }
 .icon-folder { --icon: url("/icons/folder.svg"); }
 .icon-chevron { --icon: url("/icons/chevron.svg"); }
+
+.icon-instances { --icon: url("/icons/instances.svg"); }
+.icon-add { --icon: url("/icons/add.svg"); }

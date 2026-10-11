@@ -11,33 +11,43 @@
 
     <!-- Launch Bar -->
     <section class="home-launch-bar">
-        <button class="launch-selection launch-account" type="button">
-            <!--<img class="launch-avatar" src="assets/portraits/steve.png" alt="">
-            <span class="launch-selection-copy">
-                <span class="launch-selection-title">xsyanic</span>
-                <span class="launch-selection-detail">Microsoft Account</span>
-            </span>-->
-            <img class="launch-avatar" src="assets/portraits/question-mark.png" alt="">
-            <span class="launch-selection-copy">
-                <span class="launch-selection-title">No account</span>
-                <span class="launch-selection-detail">Sign in</span>
-            </span>
-            <i class="icon icon-chevron" style="--icon-size: 16px; --icon-color: var(--launch-chevron-color);"></i>
-        </button>
+        <div class="launch-picker launch-account-picker">
+            <div class="launch-menu launch-account-menu" id="accountMenu" hidden>
+                <button class="launch-menu-action add-account" type="button">
+                    <span class="launch-menu-action-icon">
+                        <i class="icon icon-add" style="--icon-size: 16px;"></i>
+                    </span>
+                    <span>Add Account</span>
+                </button>
+            </div>
+            <button class="launch-selection launch-account" type="button">
+                <img class="launch-avatar" src="assets/portraits/question-mark.png" alt="">
+                <span class="launch-selection-copy">
+                    <span class="launch-selection-title">No account</span>
+                    <span class="launch-selection-detail">Sign in</span>
+                </span>
+                <i class="icon icon-chevron" style="--icon-size: 16px; --icon-color: var(--launch-chevron-color);"></i>
+            </button>
+        </div>
 
-        <button class="launch-selection launch-instance" type="button">
-            <!--<img class="launch-instance-icon" src="assets/instance_icons/grass_block.png" alt="">
-            <span class="launch-selection-copy">
-                <span class="launch-selection-title">SMP &amp; PVP</span>
-                <span class="launch-selection-detail">Fabric 1.21.11 (0.19.3)</span>
-            </span>-->
-            <img class="launch-instance-icon" src="assets/instance_icons/grass_block.png" alt="">
-            <span class="launch-selection-copy">
-                <span class="launch-selection-title">No instance selected</span>
-                <span class="launch-selection-detail">Pick in Instances</span>
-            </span>
-            <i class="icon icon-chevron" style="--icon-size: 16px; --icon-color: var(--launch-chevron-color);"></i>
-        </button>
+        <div class="launch-picker launch-instance-picker">
+            <div class="launch-menu launch-instance-menu" id="instanceMenu" hidden>
+                <a class="launch-menu-action manage-instances" href="/instances">
+                    <span class="launch-menu-action-icon manage-instances-icon">
+                        <i class="icon icon-instances" style="--icon-size: 16px;"></i>
+                    </span>
+                    <span>Manage Instances</span>
+                </a>
+            </div>
+            <button class="launch-selection launch-instance" type="button">
+                <img class="launch-instance-icon" src="assets/instance_icons/grass_block.png" alt="">
+                <span class="launch-selection-copy">
+                    <span class="launch-selection-title">No instance selected</span>
+                    <span class="launch-selection-detail">Pick in Instances</span>
+                </span>
+                <i class="icon icon-chevron" style="--icon-size: 16px; --icon-color: var(--launch-chevron-color);"></i>
+            </button>
+        </div>
 
         <div class="launch-actions">
             <button class="launch-folder" type="button" title="Open game folder">

@@ -33,6 +33,7 @@
 }
 
 /* Global Tweaks */
+* { scrollbar-color: var(--accent-color) var(--surface-2); scrollbar-width: thin; }
 img {-webkit-user-drag: none; user-drag: none; user-select: none;}
 a {-webkit-user-drag: none; user-select: none;}
 
@@ -57,11 +58,27 @@ hr { border: none; height: 1px; background-color: var(--gray-color); width: 40px
 .home-page h1 { align-self: center; }
 
 /* Home Page: Launch Bar */
-.home-launch-bar { box-sizing: border-box; display: flex; align-items: center; gap: 0.7rem; min-height: 96px; padding: 1.4rem 1.25rem; border-top: 1px solid var(--launch-bar-border-color); background: var(--launch-bar-bg-color); }
+.home-launch-bar { position: relative; z-index: 2; box-sizing: border-box; display: flex; align-items: center; gap: 0.7rem; min-height: 96px; padding: 1.4rem 1.25rem; border-top: 1px solid var(--launch-bar-border-color); background: var(--launch-bar-bg-color); }
+.launch-picker { position: relative; flex: 0 1 min(250px, 30%); min-width: 0; }
 .launch-selection { box-sizing: border-box; display: flex; align-items: center; gap: 0.5rem; width: min(250px, 30%); min-width: 0; height: 54px; padding: 0.5rem 0.75rem; border: 1px solid transparent; border-radius: 7px; background: var(--launch-card-bg-color); color: var(--text-color); text-align: left; cursor: pointer; }
+.launch-picker .launch-selection { width: 100%; }
 .launch-selection:hover { background: var(--launch-card-hover-bg-color); }
 .launch-avatar, .launch-instance-icon { display: block; flex: 0 0 30px; width: 30px; height: 30px; border-radius: 6px; object-fit: cover;  }
 .launch-avatar {image-rendering: pixelated;}
+.launch-menu { position: absolute; bottom: calc(100% + 0.45rem); left: 0; z-index: 5; box-sizing: border-box; display: flex; flex-direction: column; width: 100%; max-height: min(320px, calc(100vh - 110px)); overflow-x: hidden; overflow-y: auto; border-radius: 8px; background: var(--surface-4); }
+.launch-menu[hidden] { display: none; }
+.launch-menu-item, .launch-menu-action { box-sizing: border-box; display: flex; flex: 0 0 auto; align-items: center; gap: 0.65rem; min-width: 0; padding: 0.15rem 0.75rem; border: 0; border-bottom: 1px solid var(--gray-color); background: var(--surface-4); color: var(--text-color); text-align: left; text-decoration: none; cursor: pointer; }
+.launch-menu-item { min-height: 57px; }
+.launch-menu-item:hover, .launch-menu-action:hover { background: var(--surface-hover-color); }
+.launch-menu-item.is-selected { background: var(--surface-7); }
+.launch-menu-item .launch-selection-copy { gap: 0.12rem; }
+.launch-menu-item .launch-selection-detail { opacity: 0.8; }
+.launch-menu-badge { flex: 0 0 auto; padding: 0.2rem 0.4rem; border-radius: 4px; background: #24522a; color: #77df78; font-size: 0.65rem; }
+.launch-menu-action { min-height: 36px; font-size: 0.8rem; font-weight: 600; }
+.launch-menu-action:last-child { border-bottom: 0; }
+.launch-menu-action-icon { display: inline-flex; flex: 0 0 16px; align-items: center; justify-content: center; width: 16px; color: var(--text-muted-color); font-size: 1.2rem; font-weight: 400; }
+.manage-instances-icon { font-size: 1rem; }
+.launch-picker.is-open { z-index: 6; }
 .launch-selection-copy { display: flex; flex: 1; flex-direction: column; gap: 0.15rem; min-width: 0; }
 .launch-selection-title, .launch-selection-detail { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .launch-selection-title { font-size: 0.875rem; font-weight: 600; }
@@ -75,13 +92,6 @@ hr { border: none; height: 1px; background-color: var(--gray-color); width: 40px
 .launch-game { gap: 0.65rem; min-width: 186px; padding: 0 1.25rem; background: var(--accent-color); font: inherit; font-size: 0.95rem; font-weight: 700; transition: background 0.16s ease; }
 .launch-game:disabled { opacity: 1; cursor: not-allowed; }
 .launch-game svg { width: 19px; height: 19px; fill: currentColor; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.5; }
-
-/*@media (max-width: 760px) {
-    .home-launch-bar { flex-wrap: wrap; gap: 0.6rem; padding: 0.75rem; }
-    .launch-selection { width: calc(50% - 0.3rem); min-width: 0; }
-    .launch-actions { width: 100%; margin-left: 0; }
-    .launch-game { flex: 1; }
-}*/
 
 /* Home Page: News Section*/
 .home-news-section { margin-top: 1.5rem; }
