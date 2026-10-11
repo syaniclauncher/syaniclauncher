@@ -1,10 +1,55 @@
-<div class="page-container home-page">
+<div class="home-screen">
+    <!-- News Area -->
+    <div class="page-container home-page">
+        <section class="home-news-section" aria-labelledby="home-news-heading">
+            <h2 id="home-news-heading">Latest Minecraft News</h2>
+            <div id="homeNews" aria-live="polite">
+                <div class="home-news-empty">Loading Minecraft news...</div>
+            </div>
+        </section>
+    </div>
 
-    <section class="home-news-section" aria-labelledby="home-news-heading">
-        <h2 id="home-news-heading">Latest Minecraft News</h2>
-        <div id="homeNews" aria-live="polite">
-            <div class="home-news-empty">Loading Minecraft news...</div>
+    <!-- Launch Bar -->
+    <section class="home-launch-bar" aria-label="Game launch controls">
+        <button class="launch-selection launch-account" type="button" aria-label="Select account">
+            <!--<img class="launch-avatar" src="assets/portraits/steve.png" alt="">
+            <span class="launch-selection-copy">
+                <span class="launch-selection-title">xsyanic</span>
+                <span class="launch-selection-detail">Microsoft Account</span>
+            </span>-->
+            <img class="launch-avatar" src="assets/portraits/question-mark.png" alt="">
+            <span class="launch-selection-copy">
+                <span class="launch-selection-title">No account</span>
+                <span class="launch-selection-detail">Sign in</span>
+            </span>
+            <!-- todo: make chevron function/add dropup menu -->
+            <svg class="launch-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 10 4.5-4 4.5 4" /></svg>
+        </button>
+
+        <button class="launch-selection launch-instance" type="button" aria-label="Select game instance">
+            <!--<img class="launch-instance-icon" src="assets/installation_icons/grass_block.png" alt="">
+            <span class="launch-selection-copy">
+                <span class="launch-selection-title">SMP &amp; PVP</span>
+                <span class="launch-selection-detail">Fabric 1.21.11 (0.19.3)</span>
+            </span>-->
+            <img class="launch-instance-icon" src="assets/installation_icons/grass_block.png" alt="">
+            <span class="launch-selection-copy">
+                <span class="launch-selection-title">No instance selected</span>
+                <span class="launch-selection-detail">Pick in Instances</span>
+            </span>
+            <!-- todo: make chevron function/add dropup menu -->
+            <svg class="launch-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 10 4.5-4 4.5 4" /></svg>
+        </button>
+
+        <div class="launch-actions">
+            <button class="launch-folder" type="button" aria-label="Open game folder" title="Open game folder">
+                <!-- replace svg here soon -->
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.75A1.75 1.75 0 0 1 4.75 5h5l2 2h7.5A1.75 1.75 0 0 1 21 8.75v8.5A1.75 1.75 0 0 1 19.25 19H4.75A1.75 1.75 0 0 1 3 17.25z" /><path d="M3.5 9h17" /></svg>
+            </button>
+            <button class="launch-game" type="button" disabled title="Game launching is not available yet">
+                <!-- svg here soon -->
+                <span>Launch Game</span>
+            </button>
         </div>
     </section>
-
 </div>
