@@ -1,4 +1,6 @@
 import { renderHomeNews, stopHomeNews } from "./homePage/handlerNews.js";
+import { populateHomeLaunchOptions } from "./homePage/handlerLaunchOptions.js";
+import { setupHomeLaunchMenus, stopHomeLaunchMenus } from "./homePage/handlerLaunchMenus.js";
 
 let currentRoute = "/";
 let activePage;
@@ -7,8 +9,15 @@ let navigationId = 0;
 const pages = {
     "/": {
         template: "./pages/home.html",
-        onEnter: renderHomeNews,
-        onLeave: stopHomeNews,
+        onEnter: () => {
+            renderHomeNews();
+            populateHomeLaunchOptions();
+            setupHomeLaunchMenus();
+        },
+        onLeave: () => {
+            stopHomeNews();
+            stopHomeLaunchMenus();
+        },
     },
     "/instances": {
         template: "./pages/instances.html",
