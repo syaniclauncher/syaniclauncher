@@ -1,0 +1,15 @@
+/* Icon set */
+.icon {
+    display: inline-block;
+    width: var(--icon-size, 18px);
+    height: var(--icon-size, 18px);
+    flex: none;
+    background-color: var(--icon-color, currentColor);
+    -webkit-mask: var(--icon) center / contain no-repeat;
+    mask: var(--icon) center / contain no-repeat;
+}
+
+/* used in home: launch bar */
+.icon-rocket { --icon: url("/icons/rocket.svg"); }
+.icon-folder { --icon: url("/icons/folder.svg"); }
+.icon-chevron { --icon: url("/icons/chevron.svg"); }
