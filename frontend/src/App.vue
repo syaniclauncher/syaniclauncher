@@ -48,6 +48,6 @@ a.active { background-color: var(--gray-color); }
 .main-nav a { color: var(--text-color); display: block; text-decoration: none; padding: 0.3rem 0.5rem; border-radius: 8px;}
 .main-nav a:hover { background-color: var(--gray-color); }
 
-.sidebar { display: flex; flex-direction: column; padding: 1rem; border-right: 1px solid var(--gray-color); }
+.sidebar { display: flex; flex-direction: column; padding: 1rem; border-right: 1px solid var(--gray-color); background-color: var(--surface-8);}
 .sidebar > a { margin: 0.05rem 0; }
 </style>

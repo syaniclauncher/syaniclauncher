@@ -8,9 +8,10 @@ async function verifyBackendConnection() {
     } catch (error) {
         console.error("Failed to connect to backend:", error);
     }
+    await AddMicrosoftAccount();
 }
 
 verifyBackendConnection();
 
 /*import { AddMicrosoftAccount } from '@wails/go/app/App.js';
-await AddMicrosoftAccount();*/
+(async () => await AddMicrosoftAccount())();*/
