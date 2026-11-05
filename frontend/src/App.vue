@@ -44,10 +44,10 @@ const route = ref("/");
 main { display: flex; flex-direction: column; flex-grow: 1; min-width: 0; min-height: 0; }
 a.active { background-color: var(--gray-color); }
 
-.main-nav { display: flex; flex-direction: column; flex-shrink: 0; align-items: flex-start;}
+.main-nav { display: flex; flex-direction: column; flex-shrink: 0; }
 .main-nav a { color: var(--text-color); display: block; text-decoration: none; padding: 0.3rem 0.5rem; border-radius: 8px;}
 .main-nav a:hover { background-color: var(--gray-color); }
 
-.sidebar { display: flex; flex-direction: column; padding: 1rem; border-right: 1px solid var(--gray-color); background-color: var(--surface-8);}
+.sidebar { display: flex; flex-direction: column; padding: 1rem 1.3rem; border-right: 1px solid var(--gray-color); background-color: var(--surface-8);}
 .sidebar > a { margin: 0.05rem 0; }
 </style>
