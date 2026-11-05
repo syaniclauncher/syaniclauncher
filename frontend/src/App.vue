@@ -1,10 +1,10 @@
 <script setup>
 import { ref } from "vue";
-import Home from "./pages/Home.vue";
-import Instances from "./pages/Instances.vue";
-import PublicServers from "./pages/PublicServers.vue";
-import Performance from "./pages/Performance.vue";
-import Settings from "./pages/Settings.vue";
+import Home from "@/pages/Home/Home.vue";
+import Instances from "@/pages/Instances.vue";
+import PublicServers from "@/pages/PublicServers.vue";
+import Performance from "@/pages/Performance.vue";
+import Settings from "@/pages/Settings.vue";
 
 const routes = {
     "/": Home,

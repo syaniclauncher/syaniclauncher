@@ -1,7 +1,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
-import { BrowserOpenURL } from "../../wailsjs/runtime/runtime.js";
+import { BrowserOpenURL } from "@wails/runtime/runtime.js";
 
 const FEED = "https://syaniclauncher.github.io/news/minecraft_news.json";
 

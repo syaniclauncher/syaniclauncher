@@ -1,6 +1,6 @@
 <script setup>
-import NewsCard from "../components/NewsCard.vue";
-import LaunchBar from "../components/LaunchBar.vue";
+import NewsCard from "./components/NewsCard.vue";
+import LaunchBar from "./components/LaunchBar.vue";
 
 defineEmits(["navigate"]);
 </script>
