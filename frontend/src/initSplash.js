@@ -4,20 +4,17 @@ import { IsBackendReady } from "../wailsjs/go/app/App.js";
 
 async function checkBackend() {
     try {
-        const response = await IsBackendReady();
-      if (response) {
-            // document.getElementById("overlay").style.display = "none";
-            // fade animation
+        if (await IsBackendReady()) {
             const overlay = document.getElementById("overlay");
             overlay.classList.add("fade-out");
-            overlay.addEventListener("animationend", () => { overlay.style.display = "none"; }, { once: true });
-        } else {
-            setTimeout(checkBackend, 1000); //loop
+            overlay.addEventListener("animationend", () => overlay.style.display = "none", { once: true });
+            return;
         }
     } catch (error) {
         console.error(error);
-        setTimeout(checkBackend, 1000); // 1s
     }
+
+    setTimeout(checkBackend, 1000);
 }
 
 checkBackend();

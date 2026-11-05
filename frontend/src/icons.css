@@ -16,3 +16,4 @@
 
 .icon-instances { --icon: url("/icons/instances.svg"); }
 .icon-add { --icon: url("/icons/add.svg"); }
+.icon-trash { --icon: url("/icons/trash.svg"); }

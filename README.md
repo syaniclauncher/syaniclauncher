@@ -27,7 +27,7 @@ Old SyanicLauncher was written in Python + Electron and was totally unmaintainab
 
 There were occasional issues with the launcher not working as expected, issues with python itself, compilation times, size of the compiled artifact due to bundled electron and python making it unpleasing and unperformative.
 
-GoLang + Wails + Vanilla HTML/CSS/JS is a much better combination for a modern, maintainable launcher without compromising and would also help me get better at GoLang.
+GoLang + Wails + Vue is a much better combination for a modern, maintainable launcher without compromising and would also help me get better at GoLang.
 
 ### commands:
 For development: `wails dev`

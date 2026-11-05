@@ -5,5 +5,9 @@
   "author": {
     "name": "Prathvii",
     "email": "truesyanic@proton.me"
-  }
+  },
+  "frontend:install": "npm install",
+  "frontend:build": "npm run build",
+  "frontend:dev:watcher": "npm run dev",
+  "frontend:dev:serverUrl": "auto"
 }

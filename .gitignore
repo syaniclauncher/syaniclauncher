@@ -1,5 +1,9 @@
 # build artifacts
 build/bin
+frontend/dist
+
+# frontend deps
+frontend/node_modules
 
 # temporary go cache
 .tmp-go

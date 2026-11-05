@@ -1,0 +1,44 @@
+:root {
+    --bg-color: #0a0a0a;
+
+    --surface-1: #121212;
+    --surface-2: #151515;
+    --surface-3: #171717;
+    --surface-4: #1a1a1a;
+    --surface-5: #202020;
+    --surface-6: #212325;
+    --surface-7: #2a2626;
+
+    --accent-color: #FF4444 ;
+
+    --gray-color: #262626;
+    --text-color: white;
+    --surface-alt-color: #111;
+    --surface-hover-color: #333;
+    --text-muted-color: #bdbdbd;
+    --text-subtle-color: #999;
+    --text-dim-color: #777;
+    --text-disabled-color: #666;
+    --control-overlay-color: rgba(0, 0, 0, 0.55);
+    --image-mask-color: #000;
+    --overlay-bg: rgba(0, 0, 0, 1);
+    --launch-bar-border-color: var(--gray-color);
+    --launch-bar-bg-color: var(--bg-color);
+    --launch-card-bg-color: var(--surface-3);
+    --launch-card-hover-bg-color: var(--surface-hover-color);
+    --launch-avatar-bg-color: var(--surface-alt-color);
+    --launch-avatar-text-color: var(--text-color);
+    --launch-chevron-color: var(--text-subtle-color);
+    --launch-folder-icon-color: var(--text-muted-color);
+}
+
+/* Global Tweaks */
+* { scrollbar-color: var(--accent-color) var(--surface-2); scrollbar-width: thin; }
+img {-webkit-user-drag: none; user-drag: none; user-select: none;}
+a {-webkit-user-drag: none; user-select: none;}
+
+/* Rest of the styles */
+html,body { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Oxygen, Ubuntu, Roboto, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif; margin: 0; height: 100%; color: var(--text-color); background-color: var(--bg-color); }
+p { margin-block-start: 0; text-indent: 1rem; }
+
+.page-container { display: flex; flex-direction: column; padding: 0 1rem; box-sizing: border-box; width: 100%; max-width: 1100px; flex: 1; margin: 0 auto; overflow-y: auto; }
