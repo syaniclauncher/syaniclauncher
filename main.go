@@ -12,6 +12,9 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 )
 
+// supplied when bulding
+var BUILD_ID string = "dev"
+
 //go:embed all:frontend/dist
 var assets embed.FS
 
@@ -22,8 +25,9 @@ func main() {
 	flag.BoolVar(&helpers.DebugMode, "debug", true, "Enable debug mode") // true for now
 	flag.Parse()
 
+	window_title := "Syanic Launcher (" + BUILD_ID + ")"
 	err := wails.Run(&options.App{
-		Title:  "Syanic Launcher",
+		Title:  window_title,
 		Width:  1300,
 		Height: 750,
 		AssetServer: &assetserver.Options{
