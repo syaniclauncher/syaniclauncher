@@ -25,5 +25,6 @@ func (a *App) AddMicrosoftAccount() {
 		}
 
 		log.Println("Microsoft OAuth Successful")
+		log.Println(authResult.RefreshToken) //test
 	}()
 }

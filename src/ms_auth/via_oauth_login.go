@@ -1,5 +1,7 @@
 package ms_auth
 
+// to get AuthResult via Oauth way
+
 import (
 	"context"
 	"encoding/json"
@@ -13,18 +15,6 @@ import (
 	"strings"
 	"time"
 )
-
-const (
-	clientID    = "e4789891-9cae-424f-baba-4f8aa9cf90c1"
-	redirectURI = "https://syaniclauncher.github.io/auth_callback"
-)
-
-type AuthResult struct {
-	AccessToken  string
-	RefreshToken string
-	ExpiresIn    int64
-	Err          error
-}
 
 func StartMicrosoftBrowserAuth() (string, <-chan AuthResult, error) {
 	listener, err := net.Listen("tcp", "127.0.0.1:0") // bind on free port
@@ -40,16 +30,18 @@ func StartMicrosoftBrowserAuth() (string, <-chan AuthResult, error) {
 	params.Set("response_type", "code")
 	params.Set("redirect_uri", redirectURI)
 	params.Set("response_mode", "query")
-	params.Set("scope", "XboxLive.signin offline_access")
+	params.Set("scope", microsoftAuthScope)
 	params.Set("state", state)
 
-	authURL := "https://login.microsoftonline.com/consumers/oauth2/v2.0/authorize?" + params.Encode()
+	authURL := microsoftAuthorizeURL + "?" + params.Encode()
 
 	result := make(chan AuthResult, 1)
 	mux := http.NewServeMux()
 	server := &http.Server{Handler: mux}
 
-	mux.HandleFunc("/", pageDefault)
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, `<body style="margin:0;height:100vh;display:grid;place-content:center;text-align:center;background:#000;color:#fff;font:14px/1.5 system-ui,sans-serif"><img src="https://syaniclauncher.github.io/misc/ourport.png" style="max-width:90vw;max-height:80vh"><small style="color:#aaa;letter-spacing:.3px">This port is temporarily used for ms oauth</small>`)
+	})
 	mux.HandleFunc("/auth_callback", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Query().Get("state") != state {
 			http.Error(w, "Invalid OAuth state", http.StatusBadRequest)
@@ -62,12 +54,12 @@ func StartMicrosoftBrowserAuth() (string, <-chan AuthResult, error) {
 			return
 		}
 
-		token, err := exchangeCode(code)
+		token, err := exchangeOauthCode(code)
 		if err != nil {
 			http.Error(w, "Token exchange failed", http.StatusBadGateway)
 			result <- AuthResult{Err: err}
 		} else {
-			http.Redirect(w, r, "https://syaniclauncher.github.io/auth_success", http.StatusFound) //redirect to hide code in browser
+			http.Redirect(w, r, successURI, http.StatusFound) //redirect to hide code in browser
 			result <- token
 		}
 
@@ -96,10 +88,6 @@ func StartMicrosoftBrowserAuth() (string, <-chan AuthResult, error) {
 	return authURL, result, nil
 }
 
-func pageDefault(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, `<body style="margin:0;height:100vh;display:grid;place-content:center;text-align:center;background:#000;color:#fff;font:14px/1.5 system-ui,sans-serif"><img src="https://syaniclauncher.github.io/misc/ourport.png" style="max-width:90vw;max-height:80vh"><small style="color:#aaa;letter-spacing:.3px">This port is temporarily used for ms oauth</small>`)
-}
-
 type tokenResponse struct {
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
@@ -108,7 +96,7 @@ type tokenResponse struct {
 	Description  string `json:"error_description"`
 }
 
-func exchangeCode(code string) (AuthResult, error) {
+func exchangeOauthCode(code string) (AuthResult, error) {
 	form := url.Values{}
 	form.Set("client_id", clientID)
 	form.Set("grant_type", "authorization_code")
@@ -117,7 +105,7 @@ func exchangeCode(code string) (AuthResult, error) {
 
 	req, err := http.NewRequest(
 		http.MethodPost,
-		"https://login.microsoftonline.com/consumers/oauth2/v2.0/token",
+		microsoftTokenURL,
 		strings.NewReader(form.Encode()),
 	)
 	if err != nil {
