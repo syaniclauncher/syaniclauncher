@@ -17,6 +17,13 @@ import (
 )
 
 func StartMicrosoftBrowserAuth() (string, <-chan AuthResult, error) {
+	return StartMicrosoftBrowserAuthContext(context.Background())
+}
+
+func StartMicrosoftBrowserAuthContext(ctx context.Context) (string, <-chan AuthResult, error) {
+	if err := ctx.Err(); err != nil {
+		return "", nil, err
+	}
 	listener, err := net.Listen("tcp", "127.0.0.1:0") // bind on free port
 	if err != nil {
 		return "", nil, err
@@ -54,13 +61,19 @@ func StartMicrosoftBrowserAuth() (string, <-chan AuthResult, error) {
 			return
 		}
 
-		token, err := exchangeOauthCode(code)
+		token, err := exchangeOauthCode(ctx, code)
 		if err != nil {
 			http.Error(w, "Token exchange failed", http.StatusBadGateway)
-			result <- AuthResult{Err: err}
+			select {
+			case result <- AuthResult{Err: err}:
+			default:
+			}
 		} else {
 			http.Redirect(w, r, successURI, http.StatusFound) //redirect to hide code in browser
-			result <- token
+			select {
+			case result <- token:
+			default:
+			}
 		}
 
 		go func() {
@@ -77,12 +90,20 @@ func StartMicrosoftBrowserAuth() (string, <-chan AuthResult, error) {
 		}
 	}()
 
-	// close temporary server if user never completes authentication
 	go func() {
-		time.Sleep(5 * time.Minute)
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		timer := time.NewTimer(5 * time.Minute)
+		defer timer.Stop()
+		select {
+		case <-ctx.Done():
+		case <-timer.C:
+			select {
+			case result <- AuthResult{Err: fmt.Errorf("Microsoft browser sign-in timed out")}:
+			default:
+			}
+		}
+		shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
-		_ = server.Shutdown(ctx)
+		_ = server.Shutdown(shutdownCtx)
 	}()
 
 	return authURL, result, nil
@@ -96,14 +117,14 @@ type tokenResponse struct {
 	Description  string `json:"error_description"`
 }
 
-func exchangeOauthCode(code string) (AuthResult, error) {
+func exchangeOauthCode(ctx context.Context, code string) (AuthResult, error) {
 	form := url.Values{}
 	form.Set("client_id", clientID)
 	form.Set("grant_type", "authorization_code")
 	form.Set("code", code)
 	form.Set("redirect_uri", redirectURI)
 
-	req, err := http.NewRequest(
+	req, err := http.NewRequestWithContext(ctx,
 		http.MethodPost,
 		microsoftTokenURL,
 		strings.NewReader(form.Encode()),

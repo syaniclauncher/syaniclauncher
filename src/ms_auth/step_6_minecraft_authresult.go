@@ -1,6 +1,7 @@
 package ms_auth
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 )
@@ -11,10 +12,14 @@ type minecraftAuthResponse struct {
 }
 
 func AuthenticateMinecraft(userHash, xstsToken string) (MinecraftAuthResult, error) {
-	return requestMinecraftAuthentication(minecraftLoginURL, userHash, xstsToken)
+	return AuthenticateMinecraftContext(context.Background(), userHash, xstsToken)
 }
 
-func requestMinecraftAuthentication(endpoint, userHash, xstsToken string) (MinecraftAuthResult, error) {
+func AuthenticateMinecraftContext(ctx context.Context, userHash, xstsToken string) (MinecraftAuthResult, error) {
+	return requestMinecraftAuthentication(ctx, minecraftLoginURL, userHash, xstsToken)
+}
+
+func requestMinecraftAuthentication(ctx context.Context, endpoint, userHash, xstsToken string) (MinecraftAuthResult, error) {
 	if userHash == "" || xstsToken == "" {
 		return MinecraftAuthResult{}, fmt.Errorf("Xbox user hash and XSTS token are required")
 	}
@@ -22,7 +27,7 @@ func requestMinecraftAuthentication(endpoint, userHash, xstsToken string) (Minec
 	payload := map[string]string{
 		"identityToken": fmt.Sprintf("XBL3.0 x=%s;%s", userHash, xstsToken),
 	}
-	body, status, err := requestAuthAPI(http.MethodPost, endpoint, payload, "")
+	body, status, err := requestAuthAPIContext(ctx, http.MethodPost, endpoint, payload, "")
 	if err != nil {
 		return MinecraftAuthResult{}, err
 	}

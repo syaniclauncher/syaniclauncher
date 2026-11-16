@@ -26,6 +26,10 @@ export function BrowserOpenURL(arg1) {
   return window['go']['app']['App']['BrowserOpenURL'](arg1);
 }
 
+export function CancelMicrosoftLogin() {
+  return window['go']['app']['App']['CancelMicrosoftLogin']();
+}
+
 export function CheckConnection() {
   return window['go']['app']['App']['CheckConnection']();
 }

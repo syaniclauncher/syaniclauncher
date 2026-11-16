@@ -3,6 +3,7 @@ package ms_auth
 // to get AuthResult via Device Code way
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -22,11 +23,18 @@ type deviceCodeResponse struct {
 }
 
 func StartMicrosoftDeviceCodeAuth() (result <-chan AuthResult, err error, verificationURI, userCode string) {
+	return StartMicrosoftDeviceCodeAuthContext(context.Background())
+}
+
+func StartMicrosoftDeviceCodeAuthContext(ctx context.Context) (result <-chan AuthResult, err error, verificationURI, userCode string) {
+	if err := ctx.Err(); err != nil {
+		return nil, err, "", ""
+	}
 	form := url.Values{}
 	form.Set("client_id", clientID)
 	form.Set("scope", microsoftAuthScope)
 
-	req, err := http.NewRequest(http.MethodPost, microsoftDeviceCodeURL, strings.NewReader(form.Encode()))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, microsoftDeviceCodeURL, strings.NewReader(form.Encode()))
 	if err != nil {
 		return nil, err, "", ""
 	}
@@ -67,7 +75,7 @@ func StartMicrosoftDeviceCodeAuth() (result <-chan AuthResult, err error, verifi
 	expiresAt := time.Now().Add(time.Duration(deviceCode.ExpiresIn) * time.Second)
 	interval := time.Duration(deviceCode.Interval) * time.Second
 	go func() {
-		authResult, err := pollMicrosoftDeviceCode(client, microsoftTokenURL, deviceCode.DeviceCode, interval, expiresAt)
+		authResult, err := pollMicrosoftDeviceCode(ctx, client, microsoftTokenURL, deviceCode.DeviceCode, interval, expiresAt)
 		if err != nil {
 			resultChan <- AuthResult{Err: err}
 			return
@@ -78,8 +86,11 @@ func StartMicrosoftDeviceCodeAuth() (result <-chan AuthResult, err error, verifi
 	return resultChan, nil, deviceCode.VerificationURI, deviceCode.UserCode
 }
 
-func pollMicrosoftDeviceCode(client *http.Client, endpoint, deviceCode string, interval time.Duration, expiresAt time.Time) (AuthResult, error) {
+func pollMicrosoftDeviceCode(ctx context.Context, client *http.Client, endpoint, deviceCode string, interval time.Duration, expiresAt time.Time) (AuthResult, error) {
 	for {
+		if err := ctx.Err(); err != nil {
+			return AuthResult{}, err
+		}
 		remaining := time.Until(expiresAt)
 		if remaining <= 0 {
 			return AuthResult{}, fmt.Errorf("Microsoft device code expired")
@@ -88,7 +99,13 @@ func pollMicrosoftDeviceCode(client *http.Client, endpoint, deviceCode string, i
 		if wait > remaining {
 			wait = remaining
 		}
-		time.Sleep(wait)
+		timer := time.NewTimer(wait)
+		select {
+		case <-ctx.Done():
+			timer.Stop()
+			return AuthResult{}, ctx.Err()
+		case <-timer.C:
+		}
 		if time.Until(expiresAt) <= 0 {
 			return AuthResult{}, fmt.Errorf("Microsoft device code expired")
 		}
@@ -97,7 +114,7 @@ func pollMicrosoftDeviceCode(client *http.Client, endpoint, deviceCode string, i
 		form.Set("client_id", clientID)
 		form.Set("grant_type", "urn:ietf:params:oauth:grant-type:device_code")
 		form.Set("device_code", deviceCode)
-		req, err := http.NewRequest(http.MethodPost, endpoint, strings.NewReader(form.Encode()))
+		req, err := http.NewRequestWithContext(ctx, http.MethodPost, endpoint, strings.NewReader(form.Encode()))
 		if err != nil {
 			return AuthResult{}, err
 		}

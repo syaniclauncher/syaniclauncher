@@ -1,6 +1,7 @@
 package ms_auth
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -13,10 +14,14 @@ type xstsErrorResponse struct {
 }
 
 func AuthorizeXSTS(xboxToken string) (XSTSAuthResult, error) {
-	return requestXSTSAuthorization(xstsAuthorizeURL, xboxToken)
+	return AuthorizeXSTSContext(context.Background(), xboxToken)
 }
 
-func requestXSTSAuthorization(endpoint, xboxToken string) (XSTSAuthResult, error) {
+func AuthorizeXSTSContext(ctx context.Context, xboxToken string) (XSTSAuthResult, error) {
+	return requestXSTSAuthorization(ctx, xstsAuthorizeURL, xboxToken)
+}
+
+func requestXSTSAuthorization(ctx context.Context, endpoint, xboxToken string) (XSTSAuthResult, error) {
 	if xboxToken == "" {
 		return XSTSAuthResult{}, fmt.Errorf("Xbox Live token is empty")
 	}
@@ -31,7 +36,7 @@ func requestXSTSAuthorization(endpoint, xboxToken string) (XSTSAuthResult, error
 		"RelyingParty": minecraftRelyingParty,
 		"TokenType":    "JWT",
 	}
-	body, status, err := requestAuthAPI(http.MethodPost, endpoint, payload, "")
+	body, status, err := requestAuthAPIContext(ctx, http.MethodPost, endpoint, payload, "")
 	if err != nil {
 		return XSTSAuthResult{}, err
 	}

@@ -1,6 +1,7 @@
 package ms_auth
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 )
@@ -15,10 +16,14 @@ type xboxAuthResponse struct {
 }
 
 func AuthenticateXboxLive(microsoftAccessToken string) (XboxAuthResult, error) {
-	return requestXboxLiveAuthentication(xboxAuthURL, microsoftAccessToken)
+	return AuthenticateXboxLiveContext(context.Background(), microsoftAccessToken)
 }
 
-func requestXboxLiveAuthentication(endpoint, microsoftAccessToken string) (XboxAuthResult, error) {
+func AuthenticateXboxLiveContext(ctx context.Context, microsoftAccessToken string) (XboxAuthResult, error) {
+	return requestXboxLiveAuthentication(ctx, xboxAuthURL, microsoftAccessToken)
+}
+
+func requestXboxLiveAuthentication(ctx context.Context, endpoint, microsoftAccessToken string) (XboxAuthResult, error) {
 	if microsoftAccessToken == "" {
 		return XboxAuthResult{}, fmt.Errorf("Microsoft access token is empty")
 	}
@@ -32,7 +37,7 @@ func requestXboxLiveAuthentication(endpoint, microsoftAccessToken string) (XboxA
 		"RelyingParty": xboxRelyingParty,
 		"TokenType":    "JWT",
 	}
-	body, status, err := requestAuthAPI(http.MethodPost, endpoint, payload, "")
+	body, status, err := requestAuthAPIContext(ctx, http.MethodPost, endpoint, payload, "")
 	if err != nil {
 		return XboxAuthResult{}, err
 	}

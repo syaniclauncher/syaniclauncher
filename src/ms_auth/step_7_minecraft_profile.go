@@ -1,6 +1,7 @@
 package ms_auth
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 )
@@ -11,15 +12,19 @@ type minecraftProfileResponse struct {
 }
 
 func GetMinecraftProfile(accessToken string) (MinecraftProfile, error) {
-	return requestMinecraftProfile(minecraftProfileURL, accessToken)
+	return GetMinecraftProfileContext(context.Background(), accessToken)
 }
 
-func requestMinecraftProfile(endpoint, accessToken string) (MinecraftProfile, error) {
+func GetMinecraftProfileContext(ctx context.Context, accessToken string) (MinecraftProfile, error) {
+	return requestMinecraftProfile(ctx, minecraftProfileURL, accessToken)
+}
+
+func requestMinecraftProfile(ctx context.Context, endpoint, accessToken string) (MinecraftProfile, error) {
 	if accessToken == "" {
 		return MinecraftProfile{}, fmt.Errorf("Minecraft access token is empty")
 	}
 
-	body, status, err := requestAuthAPI(http.MethodGet, endpoint, nil, accessToken)
+	body, status, err := requestAuthAPIContext(ctx, http.MethodGet, endpoint, nil, accessToken)
 	if err != nil {
 		return MinecraftProfile{}, err
 	}

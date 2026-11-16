@@ -2,6 +2,7 @@ package ms_auth
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -11,6 +12,10 @@ import (
 )
 
 func requestAuthAPI(method, endpoint string, payload any, bearerToken string) ([]byte, int, error) {
+	return requestAuthAPIContext(context.Background(), method, endpoint, payload, bearerToken)
+}
+
+func requestAuthAPIContext(ctx context.Context, method, endpoint string, payload any, bearerToken string) ([]byte, int, error) {
 	var requestBody io.Reader
 	if payload != nil {
 		encoded, err := json.Marshal(payload)
@@ -19,7 +24,7 @@ func requestAuthAPI(method, endpoint string, payload any, bearerToken string) ([
 		}
 		requestBody = bytes.NewReader(encoded)
 	}
-	req, err := http.NewRequest(method, endpoint, requestBody)
+	req, err := http.NewRequestWithContext(ctx, method, endpoint, requestBody)
 	if err != nil {
 		return nil, 0, err
 	}

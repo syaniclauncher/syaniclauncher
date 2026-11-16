@@ -15,10 +15,12 @@ export function AccountsRefresh():Promise<launcher_accounts.AccountList>;
 
 export function BrowserOpenURL(arg1:string):Promise<void>;
 
+export function CancelMicrosoftLogin():Promise<void>;
+
 export function CheckConnection():Promise<string>;
 
 export function IsBackendReady():Promise<boolean>;
 
-export function StartMicrosoftBrowserLogin():Promise<void>;
+export function StartMicrosoftBrowserLogin():Promise<string>;
 
 export function StartMicrosoftDeviceLogin():Promise<app.MicrosoftDeviceLogin>;

@@ -1,6 +1,8 @@
 package app
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -18,57 +20,130 @@ type MicrosoftDeviceLogin struct {
 	UserCode        string `json:"user_code"`
 }
 
-func (a *App) StartMicrosoftBrowserLogin() error {
-	authURL, result, err := ms_auth.StartMicrosoftBrowserAuth()
+type microsoftAuthSession struct {
+	ctx    context.Context
+	cancel context.CancelFunc
+}
+
+func (a *App) beginMicrosoftAuth() (*microsoftAuthSession, error) {
+	if a.ctx == nil {
+		return nil, fmt.Errorf("app is not initialized")
+	}
+	ctx, cancel := context.WithCancel(a.ctx)
+	session := &microsoftAuthSession{ctx: ctx, cancel: cancel}
+
+	a.authMu.Lock()
+	previous := a.microsoftAuth
+	a.microsoftAuth = session
+	a.authMu.Unlock()
+	if previous != nil {
+		previous.cancel()
+	}
+	return session, nil
+}
+
+func (a *App) finishMicrosoftAuth(session *microsoftAuthSession) {
+	session.cancel()
+	a.authMu.Lock()
+	if a.microsoftAuth == session {
+		a.microsoftAuth = nil
+	}
+	a.authMu.Unlock()
+}
+
+func (a *App) CancelMicrosoftLogin() {
+	a.authMu.Lock()
+	session := a.microsoftAuth
+	a.microsoftAuth = nil
+	a.authMu.Unlock()
+	if session != nil {
+		session.cancel()
+	}
+}
+
+func (a *App) StartMicrosoftBrowserLogin() (string, error) {
+	session, err := a.beginMicrosoftAuth()
 	if err != nil {
-		return err
+		return "", err
+	}
+	authURL, result, err := ms_auth.StartMicrosoftBrowserAuthContext(session.ctx)
+	if err != nil {
+		a.finishMicrosoftAuth(session)
+		return "", err
+	}
+	if err := session.ctx.Err(); err != nil {
+		a.finishMicrosoftAuth(session)
+		return "", err
 	}
 	helpers.OpenInBrowser(a.ctx, authURL)
-	go a.finishMicrosoftLogin(result)
-	return nil
+	go a.finishMicrosoftLogin(session, result)
+	return authURL, nil
 }
 
 func (a *App) StartMicrosoftDeviceLogin() (MicrosoftDeviceLogin, error) {
-	result, err, verificationURI, userCode := ms_auth.StartMicrosoftDeviceCodeAuth()
+	session, err := a.beginMicrosoftAuth()
 	if err != nil {
 		return MicrosoftDeviceLogin{}, err
 	}
-	go a.finishMicrosoftLogin(result)
+	result, err, verificationURI, userCode := ms_auth.StartMicrosoftDeviceCodeAuthContext(session.ctx)
+	if err != nil {
+		a.finishMicrosoftAuth(session)
+		return MicrosoftDeviceLogin{}, err
+	}
+	if err := session.ctx.Err(); err != nil {
+		a.finishMicrosoftAuth(session)
+		return MicrosoftDeviceLogin{}, err
+	}
+	go a.finishMicrosoftLogin(session, result)
 	return MicrosoftDeviceLogin{
 		VerificationURI: verificationURI,
 		UserCode:        userCode,
 	}, nil
 }
 
-func (a *App) finishMicrosoftLogin(result <-chan ms_auth.AuthResult) {
-	auth, ok := <-result
+func (a *App) finishMicrosoftLogin(session *microsoftAuthSession, result <-chan ms_auth.AuthResult) {
+	defer a.finishMicrosoftAuth(session)
+
+	var auth ms_auth.AuthResult
+	var ok bool
+	select {
+	case <-session.ctx.Done():
+		return
+	case auth, ok = <-result:
+	}
+	if session.ctx.Err() != nil {
+		return
+	}
 	if !ok {
-		a.emitAccountAuthError(fmt.Errorf("Microsoft sign-in ended unexpectedly"))
+		a.emitAccountAuthError(session.ctx, fmt.Errorf("Microsoft sign-in ended unexpectedly"))
 		return
 	}
 	if auth.Err != nil {
-		a.emitAccountAuthError(auth.Err)
+		a.emitAccountAuthError(session.ctx, auth.Err)
 		return
 	}
 
-	xbox, err := ms_auth.AuthenticateXboxLive(auth.AccessToken)
+	xbox, err := ms_auth.AuthenticateXboxLiveContext(session.ctx, auth.AccessToken)
 	if err != nil {
-		a.emitAccountAuthError(err)
+		a.emitAccountAuthError(session.ctx, err)
 		return
 	}
-	xsts, err := ms_auth.AuthorizeXSTS(xbox.Token)
+	xsts, err := ms_auth.AuthorizeXSTSContext(session.ctx, xbox.Token)
 	if err != nil {
-		a.emitAccountAuthError(err)
+		a.emitAccountAuthError(session.ctx, err)
 		return
 	}
-	minecraft, err := ms_auth.AuthenticateMinecraft(xbox.UserHash, xsts.Token)
+	minecraft, err := ms_auth.AuthenticateMinecraftContext(session.ctx, xbox.UserHash, xsts.Token)
 	if err != nil {
-		a.emitAccountAuthError(err)
+		a.emitAccountAuthError(session.ctx, err)
 		return
 	}
-	profile, err := ms_auth.GetMinecraftProfile(minecraft.AccessToken)
+	profile, err := ms_auth.GetMinecraftProfileContext(session.ctx, minecraft.AccessToken)
 	if err != nil {
-		a.emitAccountAuthError(err)
+		a.emitAccountAuthError(session.ctx, err)
+		return
+	}
+	if session.ctx.Err() != nil {
 		return
 	}
 
@@ -80,16 +155,16 @@ func (a *App) finishMicrosoftLogin(result <-chan ms_auth.AuthResult) {
 		ExpiresAt:    time.Now().Add(90 * 24 * time.Hour).Unix(),
 	})
 	if err != nil {
-		a.emitAccountAuthError(err)
+		a.emitAccountAuthError(session.ctx, err)
 		return
 	}
-	if a.ctx != nil {
+	if a.ctx != nil && session.ctx.Err() == nil {
 		runtime.EventsEmit(a.ctx, accountAuthEvent, "success", "")
 	}
 }
 
-func (a *App) emitAccountAuthError(err error) {
-	if a.ctx != nil {
+func (a *App) emitAccountAuthError(ctx context.Context, err error) {
+	if a.ctx != nil && ctx.Err() == nil && !errors.Is(err, context.Canceled) {
 		runtime.EventsEmit(a.ctx, accountAuthEvent, "error", err.Error())
 	}
 }
