@@ -1,4 +1,5 @@
 name: Check Actions
+# why: https://blog.incidenthub.cloud/github-actions-pages-outage-aug-6-2026
 
 on:
   push:
@@ -8,4 +9,6 @@ on:
 jobs:
   success:
     runs-on: ubuntu-latest
-    steps: []
+    steps:
+      - name: Success
+        run: echo " "
