@@ -5,7 +5,6 @@ import {
     AccountRemove,
     AccountSetSelected,
     AccountsList,
-    AccountsRefresh,
     CancelMicrosoftLogin,
     StartMicrosoftBrowserLogin,
     StartMicrosoftDeviceLogin,
@@ -16,7 +15,7 @@ const props = defineProps({ open: Boolean });
 const emit = defineEmits(["toggle-picker", "close-picker"]);
 const accounts = ref([]);
 const selected = ref(null);
-const menuError = ref("");
+const accountError = ref("");
 const pendingRemovalUUID = ref(null);
 const removingAccount = ref(false);
 const selectedAccount = computed(() => accounts.value.find(account => account.uuid === selected.value));
@@ -33,25 +32,24 @@ const codeCopied = ref(false);
 let authAttempt = 0;
 let stopAuthListener;
 
+function getAccountErrorMessage(error) {
+    const message = error.message || String(error);
+    return /\bHTTP\s+429\b/i.test(message)
+        ? "Microsoft account refresh is rate-limited. Please wait before trying again."
+        : message;
+}
+
 async function loadAccounts() {
     const result = await AccountsList();
     accounts.value = result.accounts || [];
     selected.value = result.selected || null;
 }
 
-async function preloadAccounts() {
+async function loadInitialAccounts() {
     try {
         await loadAccounts();
-        const result = await AccountsRefresh();
-        accounts.value = result.accounts || [];
-        selected.value = result.selected || null;
     } catch (error) {
-        menuError.value = error.message || String(error);
-        try {
-            await loadAccounts();
-        } catch (loadError) {
-            menuError.value = loadError.message || String(loadError);
-        }
+        accountError.value = getAccountErrorMessage(error);
     }
 }
 
@@ -80,10 +78,11 @@ async function selectAccount(uuid) {
         const result = await AccountSetSelected(uuid);
         accounts.value = result.accounts || [];
         selected.value = result.selected || null;
+        accountError.value = "";
         pendingRemovalUUID.value = null;
         emit("close-picker");
     } catch (error) {
-        menuError.value = error.message || String(error);
+        accountError.value = getAccountErrorMessage(error);
     }
 }
 
@@ -97,9 +96,10 @@ async function removeAccount(account) {
         const result = await AccountRemove(account.uuid);
         accounts.value = result.accounts || [];
         selected.value = result.selected || null;
+        accountError.value = "";
         pendingRemovalUUID.value = null;
     } catch (error) {
-        menuError.value = error.message || String(error);
+        accountError.value = getAccountErrorMessage(error);
     } finally {
         removingAccount.value = false;
     }
@@ -200,7 +200,7 @@ onMounted(() => {
             errorMessage.value = message || "Microsoft sign-in failed.";
         }
     });
-    preloadAccounts();
+    loadInitialAccounts();
 });
 
 onUnmounted(() => {
@@ -245,7 +245,6 @@ onUnmounted(() => {
                     </button>
                 </template>
             </div>
-            <div v-if="menuError" class="account-menu-error">{{ menuError }}</div>
             <button class="launch-menu-action add-account" type="button" @click="showAddPrompt">
                 <span class="launch-menu-action-icon"><i class="icon icon-add" style="--icon-size: 16px;"></i></span>
                 <span>Add Account</span>
@@ -341,6 +340,7 @@ onUnmounted(() => {
                     </div>
                 </div>
 
+                <p v-if="accountError" class="account-prompt-error" role="alert">{{ accountError }}</p>
                 <p v-if="errorMessage" class="account-prompt-error" role="alert">{{ errorMessage }}</p>
             </div>
         </div>
@@ -382,8 +382,8 @@ onUnmounted(() => {
 .account-confirm-no:disabled, .account-confirm-yes:disabled { opacity: 0.55; cursor: default; }
 .launch-menu-action.add-account { position: sticky; bottom: 0; z-index: 1; gap: 0.6rem; padding: 0.45rem 0.9rem; border-top: 1px solid rgba(255, 255, 255, 0.08); border-bottom: 0; background: var(--surface-4); }
 .launch-menu-action.add-account:hover { background: rgba(255, 68, 68, 0.1); }
-.account-empty, .account-menu-error { padding: 0.75rem; color: var(--text-muted-color); font-size: 0.8rem; }
-.account-menu-error, .account-prompt-error { color: #ff8585; overflow-wrap: anywhere; }
+.account-empty { padding: 0.75rem; color: var(--text-muted-color); font-size: 0.8rem; }
+.account-prompt-error { color: #ff8585; overflow-wrap: anywhere; }
 .account-overlay { box-sizing: border-box; position: fixed; inset: 0; z-index: 1200; display: flex; align-items: center; justify-content: center; padding: 1.5rem; background: rgba(15, 15, 15, 0.92); }
 .account-popover { box-sizing: border-box; display: flex; flex-direction: column; gap: 0.4rem; width: min(400px, 100%); max-height: 80vh; overflow: auto; padding: 0.9rem; border-radius: 6px; background: var(--surface-5); box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5); }
 .account-popover-head { display: flex; align-items: center; justify-content: space-between; color: var(--text-color); font-size: 0.95rem; font-weight: 700; }
