@@ -19,4 +19,20 @@ jobs:
           go-version: 1.25.0
 
       - name: Vet Go packages
-        run: go vet ./app ./src/...
+        shell: pwsh
+        run: |
+          $dist = 'frontend/dist'
+          $placeholder = Join-Path $dist '.ci-placeholder'
+          $createdDist = -not (Test-Path $dist)
+          New-Item -ItemType Directory -Force $dist | Out-Null
+          try {
+            New-Item -ItemType File -Force $placeholder | Out-Null
+            go vet ./...
+            $vetExitCode = $LASTEXITCODE
+          } finally {
+            Remove-Item $placeholder -Force -ErrorAction SilentlyContinue
+            if ($createdDist) {
+              Remove-Item $dist -Force -ErrorAction SilentlyContinue
+            }
+          }
+          if ($vetExitCode -ne 0) { exit $vetExitCode }
