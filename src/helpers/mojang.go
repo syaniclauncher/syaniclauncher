@@ -5,8 +5,15 @@ package helpers
 import (
 	"crypto/md5"
 	"fmt"
+	"regexp"
 	"strings"
 )
+
+var minecraftUsernamePattern = regexp.MustCompile(`^[a-zA-Z0-9_]{3,16}$`)
+
+func IsValidMinecraftUsername(username string) bool {
+	return minecraftUsernamePattern.MatchString(username)
+}
 
 // Username to Offline UUID (with hyphen)
 func OfflineUUID(username string) string {

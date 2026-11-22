@@ -70,10 +70,13 @@ func ListAccounts() (AccountList, error) {
 	return publicList(accounts), nil
 }
 
-func AddOffline(username string) (AccountList, error) {
+func AddOffline(username string, skipChecks bool) (AccountList, error) {
 	username = strings.TrimSpace(username)
 	if username == "" {
 		username = "Player"
+	}
+	if !skipChecks && !helpers.IsValidMinecraftUsername(username) {
+		return AccountList{}, fmt.Errorf("Username must be 3-16 characters and use only letters, numbers, and underscores")
 	}
 	accounts, err := load()
 	if err != nil {

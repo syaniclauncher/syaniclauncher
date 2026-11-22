@@ -10,8 +10,8 @@ func (a *App) AccountsRefresh() (launcher_accounts.AccountList, error) {
 	return launcher_accounts.RefreshAll()
 }
 
-func (a *App) AccountAddOffline(username string) (launcher_accounts.AccountList, error) {
-	return launcher_accounts.AddOffline(username)
+func (a *App) AccountAddOffline(username string, skipChecks bool) (launcher_accounts.AccountList, error) {
+	return launcher_accounts.AddOffline(username, skipChecks)
 }
 
 func (a *App) AccountRemove(accountUUID string) (launcher_accounts.AccountList, error) {

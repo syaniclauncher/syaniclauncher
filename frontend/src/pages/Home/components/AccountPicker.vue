@@ -22,6 +22,7 @@ const selectedAccount = computed(() => accounts.value.find(account => account.uu
 const promptOpen = ref(false);
 const promptStep = ref("choose");
 const offlineUsername = ref("");
+const skipOfflineUsernameChecks = ref(false);
 const deviceLogin = ref(null);
 const browserLoginURL = ref("");
 const authStatus = ref("");
@@ -59,6 +60,7 @@ function showAddPrompt() {
     errorMessage.value = "";
     promptStep.value = "choose";
     offlineUsername.value = "";
+    skipOfflineUsernameChecks.value = false;
     deviceLogin.value = null;
     browserLoginURL.value = "";
     authStatus.value = "";
@@ -109,7 +111,7 @@ async function addOfflineAccount() {
     busy.value = true;
     errorMessage.value = "";
     try {
-        const result = await AccountAddOffline(offlineUsername.value);
+        const result = await AccountAddOffline(offlineUsername.value, skipOfflineUsernameChecks.value);
         accounts.value = result.accounts || [];
         selected.value = result.selected || null;
         closePrompt();
@@ -297,6 +299,11 @@ onUnmounted(() => {
                             <input id="offline-username" v-model="offlineUsername" maxlength="16"
                                 placeholder="Enter Username" autocomplete="off" spellcheck="false" autofocus>
                         </div>
+                        <p v-if="errorMessage" class="account-prompt-error" role="alert">{{ errorMessage }}</p>
+                        <label class="offline-skip-checks">
+                            <input v-model="skipOfflineUsernameChecks" type="checkbox">
+                            <span>Allow invalid characters in username</span>
+                        </label>
                         <small>Note: Official servers require Microsoft authentication.</small>
                     </div>
                     <div class="offline-form-actions">
@@ -341,7 +348,6 @@ onUnmounted(() => {
                 </div>
 
                 <p v-if="accountError" class="account-prompt-error" role="alert">{{ accountError }}</p>
-                <p v-if="errorMessage" class="account-prompt-error" role="alert">{{ errorMessage }}</p>
             </div>
         </div>
     </div>
@@ -383,7 +389,7 @@ onUnmounted(() => {
 .launch-menu-action.add-account { position: sticky; bottom: 0; z-index: 1; gap: 0.6rem; padding: 0.45rem 0.9rem; border-top: 1px solid rgba(255, 255, 255, 0.08); border-bottom: 0; background: var(--surface-4); }
 .launch-menu-action.add-account:hover { background: rgba(255, 68, 68, 0.1); }
 .account-empty { padding: 0.75rem; color: var(--text-muted-color); font-size: 0.8rem; }
-.account-prompt-error { color: #ff8585; overflow-wrap: anywhere; }
+.account-prompt-error { margin: 0; color: #ff8585; font-size: 0.76rem; line-height: 1.25; overflow-wrap: anywhere; }
 .account-overlay { box-sizing: border-box; position: fixed; inset: 0; z-index: 1200; display: flex; align-items: center; justify-content: center; padding: 1.5rem; background: rgba(15, 15, 15, 0.92); }
 .account-popover { box-sizing: border-box; display: flex; flex-direction: column; gap: 0.4rem; width: min(400px, 100%); max-height: 80vh; overflow: auto; padding: 0.9rem; border-radius: 6px; background: var(--surface-5); box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5); }
 .account-popover-head { display: flex; align-items: center; justify-content: space-between; color: var(--text-color); font-size: 0.95rem; font-weight: 700; }
@@ -395,10 +401,12 @@ onUnmounted(() => {
 .signin-option:hover { color: #ff6b6b; }
 .account-prompt-submit { min-height: 32px; padding: 0.4rem 0.7rem; border: 1px solid var(--gray-color); border-radius: 7px; background: var(--accent-color); color: var(--text-color); font: inherit; font-size: 0.8rem; text-align: center; cursor: pointer; }
 .account-prompt-submit:hover { background: var(--surface-hover-color); }
-.offline-account-form { display: flex; flex-direction: column; gap: 1rem; }
-.offline-field { display: flex; flex-direction: column; gap: 0.45rem; }
+.offline-account-form { display: flex; flex-direction: column; gap: 0.65rem; }
+.offline-field { display: flex; flex-direction: column; gap: 0.35rem; }
 .offline-field label { font-size: 0.82rem; font-weight: 600; }
 .offline-field small { color: var(--text-muted-color); font-size: 0.74rem; }
+.offline-skip-checks { display: flex; align-items: center; gap: 0.45rem; width: fit-content; color: var(--text-muted-color); font-size: 0.76rem; cursor: pointer; }
+.offline-skip-checks input { accent-color: var(--accent-color); }
 .offline-input-wrap { display: flex; align-items: center; gap: 0.6rem; min-height: 42px; padding: 0 0.7rem; border: 1px solid var(--gray-color); border-radius: 7px; background: var(--surface-2); color: var(--text-muted-color); }
 .offline-input-wrap:focus-within { border-color: var(--accent-color); }
 .offline-input-wrap input { flex: 1; min-width: 0; padding: 0.65rem 0; border: 0; outline: 0; background: transparent; color: var(--text-color); font: inherit; }

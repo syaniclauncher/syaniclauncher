@@ -3,7 +3,7 @@
 import {launcher_accounts} from '../models';
 import {app} from '../models';
 
-export function AccountAddOffline(arg1:string):Promise<launcher_accounts.AccountList>;
+export function AccountAddOffline(arg1:string,arg2:boolean):Promise<launcher_accounts.AccountList>;
 
 export function AccountRemove(arg1:string):Promise<launcher_accounts.AccountList>;
 
