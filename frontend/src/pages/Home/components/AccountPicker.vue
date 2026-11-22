@@ -228,7 +228,7 @@ onUnmounted(() => {
                     <button class="account-menu-select" type="button" @click="selectAccount(account.uuid)">
                         <span class="account-type-icon">
                             <img class="account-menu-avatar"
-                                :src="account.type === 'msa' ? '/assets/portraits/steve.png' : '/assets/portraits/offline-steve.png'"
+                                :src="account.type === 'msa' ? (account.head || '/assets/portraits/steve.png') : '/assets/portraits/offline-steve.png'"
                                 alt="">
                         </span>
                         <span class="account-menu-copy">
@@ -252,7 +252,7 @@ onUnmounted(() => {
         </div>
         <button class="launch-selection launch-account" type="button" @click="emit('toggle-picker')">
             <img class="launch-avatar" alt=""
-                :src="!selectedAccount ? '/assets/portraits/question-mark.png' : selectedAccount.type === 'msa' ? '/assets/portraits/steve.png' : '/assets/portraits/offline-steve.png'">
+                :src="!selectedAccount ? '/assets/portraits/question-mark.png' : selectedAccount.type === 'msa' ? (selectedAccount.head || '/assets/portraits/steve.png') : '/assets/portraits/offline-steve.png'">
             <span class="launch-selection-copy">
                 <span class="launch-selection-title">{{ selectedAccount?.username || "No account" }}</span>
                 <span class="launch-selection-detail">

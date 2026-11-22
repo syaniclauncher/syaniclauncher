@@ -1,11 +1,13 @@
 package launcher_accounts
 
 import (
+	"encoding/base64"
 	"fmt"
 	"strings"
 	"time"
 
 	"syaniclauncher/src/helpers"
+	"syaniclauncher/src/launcher_cache"
 )
 
 type Account struct {
@@ -22,6 +24,7 @@ type PublicAccount struct {
 	Username string `json:"username"`
 	UUID     string `json:"uuid"`
 	Expired  *bool  `json:"expired,omitempty"`
+	Head     string `json:"head,omitempty"`
 }
 
 type AccountList struct {
@@ -44,6 +47,9 @@ func publicList(accounts accountFile) AccountList {
 		if account.Type == "msa" {
 			expired := account.ExpiresAt <= now
 			public.Expired = &expired
+			if head, err := launcher_cache.GetPlayerHead(account.UUID); err == nil {
+				public.Head = "data:image/png;base64," + base64.StdEncoding.EncodeToString(head)
+			}
 		}
 		result.Accounts = append(result.Accounts, public)
 	}
