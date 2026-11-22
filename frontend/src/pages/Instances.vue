@@ -154,7 +154,7 @@ function importModpack(event) {
         @delete="removeInstance"
         @export="exportInstance" />
 
-    <main v-else class="library-page">
+    <main v-else class="library-page" :class="{ 'layout-list': layout === 'list' }">
         <header class="library-header">
             <div class="library-controls">
                 <label class="control-field search-field">
@@ -247,6 +247,7 @@ function importModpack(event) {
     padding: 1.5rem 1.7rem 1.2rem;
     background: var(--surface-3);
 }
+.library-page.layout-list { gap: 0; }
 .library-header { display: flex; flex-direction: column; border-bottom: 1px solid var(--gray-color); }
 .library-controls { display: grid; grid-template-columns: minmax(0,1fr) 126px auto; align-items: end; gap: .75rem; padding-bottom: .85rem; border-bottom: 1px solid var(--gray-color); }
 .control-field { min-width: 0; display: flex; flex-direction: column; gap: .3rem; }
@@ -317,7 +318,7 @@ function importModpack(event) {
 .layout-toggle button.active { background: var(--surface-6); color: var(--accent-color); }
 .instance-collection { min-height: 0; display: grid; align-content: start; gap: 1rem; overflow: auto; padding: .2rem .05rem 1rem; }
 .layout-grid { grid-template-columns: repeat(auto-fill, minmax(245px, 1fr)); }
-.layout-list { grid-template-columns: minmax(0, 1fr); gap: 0; border-top: 1px solid var(--gray-color); }
+.layout-list { grid-template-columns: minmax(0, 1fr); gap: 0; }
 .empty-library {
     grid-column: 1 / -1;
     min-height: 150px;
