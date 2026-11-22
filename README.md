@@ -1,5 +1,9 @@
 ## SyanicLauncher (work in progress)
-This is the rewrite of SyanicLauncher in GoLang with Wails from scratch while using Vanilla HTML/CSS/JS for the frontend.
+This is the rewrite of SyanicLauncher in GoLang with Wails from scratch while using Vue + HTML/CSS/JS for the frontend.
+
+> Looking for a frontend developer with good fundamentals (Vue, html, css & good enough frontend knowledge) so I can replace copilot with him. Reach me out on [discord](https://dsc.gg/syanicxd) via ticket.
+>
+> If you are a AI slop designer that removes slop out of AI's desings and that's the only thing you do, **STAY AWAY**
 
 #### todos:
 - Build a decent frontend
