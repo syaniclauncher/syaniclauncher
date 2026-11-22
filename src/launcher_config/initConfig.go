@@ -1,4 +1,4 @@
-package config
+package launcher_config
 
 import (
 	"context"

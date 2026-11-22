@@ -1,4 +1,4 @@
-package config
+package launcher_config
 
 // this file is supposed to contain default configuration values
 // that gets changed on initialization of the program
