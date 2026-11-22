@@ -1,18 +1,79 @@
 <script setup>
-import { ref } from "vue";
+import { onBeforeUnmount, onMounted, ref } from "vue";
 import AccountPicker from "./AccountPicker.vue";
 
 const emit = defineEmits(["navigate"]);
+const launchBar = ref(null);
 const open = ref("");
+const instances = ref(loadInstances());
+const selected = ref(loadSelected());
+
+function loadInstances() {
+    try {
+        return JSON.parse(localStorage.getItem("syanic.instances") || "[]");
+    } catch {
+        return [];
+    }
+}
+
+function loadSelected() {
+    const id = localStorage.getItem("syanic.selectedInstance");
+    return instances.value.find((instance) => instance.id === id) || null;
+}
+
+function refreshInstances() {
+    instances.value = loadInstances();
+    selected.value = loadSelected();
+}
+
+function openInstanceMenu() {
+    refreshInstances();
+    open.value = "instance";
+}
+
+function closeMenuOutside(event) {
+    if (open.value && launchBar.value && !launchBar.value.contains(event.target)) open.value = "";
+}
+
+function selectInstance(instance) {
+    localStorage.setItem("syanic.selectedInstance", instance.id);
+    selected.value = instance;
+    open.value = "";
+}
+
+function instanceIcon(instance) {
+    return instance?.iconUrl || `/assets/instance_icons/${instance?.icon || "grass_block"}.png`;
+}
+
+onMounted(() => {
+    window.addEventListener("storage", refreshInstances);
+    window.addEventListener("syanic:selected-instance", refreshInstances);
+    document.addEventListener("click", closeMenuOutside);
+    if (sessionStorage.getItem("syanic.open-instance-menu") === "true") {
+        sessionStorage.removeItem("syanic.open-instance-menu");
+        openInstanceMenu();
+    }
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener("storage", refreshInstances);
+    window.removeEventListener("syanic:selected-instance", refreshInstances);
+    document.removeEventListener("click", closeMenuOutside);
+});
 </script>
 
 <template>
-    <section class="home-launch-bar" @click="open = ''" @keydown.esc="open = ''">
+    <section ref="launchBar" class="home-launch-bar" @click="open = ''" @keydown.esc="open = ''">
         <AccountPicker :open="open === 'account'" @toggle-picker="open = open === 'account' ? '' : 'account'"
             @close-picker="open = ''" />
 
         <div class="launch-picker launch-instance-picker" :class="{ 'is-open': open === 'instance' }" @click.stop>
             <div v-show="open === 'instance'" class="launch-menu launch-instance-menu">
+                <button v-for="instance in instances" :key="instance.id" type="button"
+                    class="launch-menu-action launch-instance-action" @click.stop="selectInstance(instance)">
+                    <img class="launch-menu-instance-icon" :src="instanceIcon(instance)" :alt="instance.name">
+                    <span>{{ instance.name }}</span>
+                </button>
                 <a class="launch-menu-action manage-instances" href="#" @click.prevent="emit('navigate', '/instances'); open = ''">
                     <span class="launch-menu-action-icon manage-instances-icon"><i class="icon icon-instances" style="--icon-size: 16px;"></i></span>
                     <span>Manage Instances</span>
@@ -20,10 +81,10 @@ const open = ref("");
             </div>
             <button class="launch-selection launch-instance" type="button"
                 @click="open = open === 'instance' ? '' : 'instance'">
-                <img class="launch-instance-icon" src="/assets/instance_icons/grass_block.png" alt="">
+                <img class="launch-instance-icon" :src="instanceIcon(selected)" alt="">
                 <span class="launch-selection-copy">
-                    <span class="launch-selection-title">No instance selected</span>
-                    <span class="launch-selection-detail">Pick in Instances</span>
+                    <span class="launch-selection-title">{{ selected?.name || "No instance selected" }}</span>
+                    <span class="launch-selection-detail">{{ selected ? `${selected.loader || "vanilla"} ${selected.version || ""}` : "Pick in Instances" }}</span>
                 </span>
                 <i class="icon icon-chevron" style="--icon-size: 16px; --icon-color: var(--launch-chevron-color);"></i>
             </button>
@@ -51,6 +112,8 @@ const open = ref("");
 .launch-menu { position: absolute; bottom: calc(100% + 0.45rem); left: 0; z-index: 5; box-sizing: border-box; display: flex; flex-direction: column; width: 100%; max-height: min(320px, calc(100vh - 110px)); overflow-x: hidden; overflow-y: auto; border-radius: 8px; background: var(--surface-4); }
 .launch-menu-action { box-sizing: border-box; display: flex; flex: 0 0 auto; align-items: center; gap: 0.65rem; min-width: 0; min-height: 36px; padding: 0.15rem 0.75rem; border: 0; border-bottom: 1px solid var(--gray-color); background: var(--surface-4); color: var(--text-color); text-align: left; text-decoration: none; cursor: pointer; font-size: 0.8rem; font-weight: 600; }
 .launch-menu-action:hover { background: var(--surface-hover-color); }
+.launch-instance-action { width: 100%; }
+.launch-menu-instance-icon { width: 20px; height: 20px; border-radius: 4px; object-fit: contain; image-rendering: pixelated; }
 .launch-menu-action-icon { display: inline-flex; flex: 0 0 16px; align-items: center; justify-content: center; width: 16px; color: var(--text-muted-color); font-size: 1.2rem; font-weight: 400; }
 .manage-instances-icon { font-size: 1rem; }
 .launch-picker.is-open { z-index: 6; }

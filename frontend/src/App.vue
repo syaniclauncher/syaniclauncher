@@ -23,16 +23,26 @@ const nav = [
 ];
 
 const route = ref("/");
+const instancePageVersion = ref(0);
+
+function navigate(path) {
+    if (path === route.value && path === "/instances") {
+        instancePageVersion.value += 1;
+    }
+    route.value = path;
+}
 </script>
 
 <template>
     <div class="app">
         <nav class="sidebar main-nav">
         <a v-for="item in nav" :key="item.path" href="#" :class="{ active: route === item.path }"
-            @click.prevent="route = item.path">{{ item.label }}</a>
+            @click.prevent="navigate(item.path)">{{ item.label }}</a>
         </nav>
         <main>
-            <component :is="routes[route] || Home" @navigate="route = $event" />
+            <component :is="routes[route] || Home"
+                :key="route === '/instances' ? instancePageVersion : route"
+                @navigate="navigate" />
         </main>
     </div>
 </template>
