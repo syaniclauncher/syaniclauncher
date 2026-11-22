@@ -2,6 +2,8 @@ package app
 
 import (
 	"context"
+	"syaniclauncher/src/helpers"
+	"syaniclauncher/src/launcher_accounts"
 	"syaniclauncher/src/launcher_config"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -19,6 +21,9 @@ func (a *App) Startup(ctx context.Context) {
 		BackendReady = false
 		runtime.Quit(ctx) // close app
 		return
+	}
+	if err := launcher_accounts.ValidateAll(); err != nil {
+		helpers.WarnLauncherLog("[ACCOUNTS] Microsoft account validation failed: " + err.Error())
 	}
 
 	BackendReady = true

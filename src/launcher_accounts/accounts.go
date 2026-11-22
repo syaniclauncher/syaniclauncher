@@ -17,6 +17,7 @@ type Account struct {
 	AccessToken  string `yaml:"access_token,omitempty" json:"-"`
 	RefreshToken string `yaml:"refresh_token,omitempty" json:"-"`
 	ExpiresAt    int64  `yaml:"expires_at,omitempty" json:"-"`
+	Valid        bool   `yaml:"valid" json:"-"`
 }
 
 type PublicAccount struct {
@@ -25,6 +26,7 @@ type PublicAccount struct {
 	UUID     string `json:"uuid"`
 	Expired  *bool  `json:"expired,omitempty"`
 	Head     string `json:"head,omitempty"`
+	Valid    bool   `json:"valid"`
 }
 
 type AccountList struct {
@@ -43,12 +45,16 @@ func publicList(accounts accountFile) AccountList {
 			Type:     account.Type,
 			Username: account.Username,
 			UUID:     account.UUID,
+			Valid:    account.Valid,
 		}
 		if account.Type == "msa" {
-			expired := account.ExpiresAt <= now
+			expired := !account.Valid || account.ExpiresAt <= now
 			public.Expired = &expired
-			if head, err := launcher_cache.GetPlayerHead(account.UUID); err == nil {
-				public.Head = "data:image/png;base64," + base64.StdEncoding.EncodeToString(head)
+			if account.Valid {
+				head, err := launcher_cache.GetPlayerHead(account.UUID)
+				if err == nil {
+					public.Head = "data:image/png;base64," + base64.StdEncoding.EncodeToString(head)
+				}
 			}
 		}
 		result.Accounts = append(result.Accounts, public)
@@ -77,6 +83,7 @@ func AddOffline(username string) (AccountList, error) {
 		Type:     "offline",
 		Username: username,
 		UUID:     helpers.OfflineUUID(username),
+		Valid:    true,
 	})
 	if err := save(accounts); err != nil {
 		return AccountList{}, err
@@ -89,6 +96,7 @@ func AddMSA(account Account) (AccountList, error) {
 		return AccountList{}, fmt.Errorf("Microsoft account username and UUID are required")
 	}
 	account.Type = "msa"
+	account.Valid = true
 	accounts, err := load()
 	if err != nil {
 		return AccountList{}, err

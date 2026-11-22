@@ -25,6 +25,7 @@ export namespace launcher_accounts {
 	    uuid: string;
 	    expired?: boolean;
 	    head?: string;
+	    valid: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new PublicAccount(source);
@@ -37,6 +38,7 @@ export namespace launcher_accounts {
 	        this.uuid = source["uuid"];
 	        this.expired = source["expired"];
 	        this.head = source["head"];
+	        this.valid = source["valid"];
 	    }
 	}
 	export class AccountList {
