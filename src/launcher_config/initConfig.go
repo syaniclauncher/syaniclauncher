@@ -2,21 +2,21 @@ package launcher_config
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
 	"syaniclauncher/src/helpers"
+	"syaniclauncher/src/helpers_yml"
 )
 
-// function to initialize %appdata%/.syaniclauncher/config.json
+// function to initialize %appdata%/.syaniclauncher/config.yml
 
 // if not exists, create it with default values
 // if corrupted, reset it to default values
 // if it exists, import the values
 
 type Config struct {
-	AppDirectory string `json:"app_dir"`
+	AppDirectory string `yaml:"app_dir"`
 }
 
 func DefaultConfig() Config {
@@ -30,25 +30,21 @@ func DefaultConfig() Config {
 
 // write saves config to path, creating the file if needed
 func write(path string, cfg Config) error {
-	data, err := json.Marshal(cfg)
-
+	data, err := helpers_yml.Marshal(cfg)
 	if err != nil {
 		return err
 	}
-
-	return os.WriteFile(path, data, 0644)
+	return helpers_yml.Write(path, data, 0644)
 }
 
 // quarantine moves an unusable config file aside so it can be inspected,
 // then writes defaults in its place
 func quarantine(configPath string) {
-	backupPath := configPath + ".corrupt"
-
-	if err := os.Rename(configPath, backupPath); err != nil {
+	backupPath, err := helpers_yml.Quarantine(configPath)
+	if err != nil {
 		helpers.WarnLauncherLog(fmt.Sprintf("[CONFIG-INIT] could not keep corrupted file: %v", err))
 		return
 	}
-
 	helpers.WarnLauncherLog(fmt.Sprintf("[CONFIG-INIT] corrupted, previous file kept at %s", backupPath))
 }
 
@@ -70,9 +66,9 @@ func InitConfig(appContext context.Context) (*Config, error) {
 	}
 
 	defaultAppDir := filepath.Join(appData, ".syaniclauncher")
-	// config location is fixed under default directory btw (%appdata%/.syaniclauncher/config.json)
+	// config location is fixed under default directory btw (%appdata%/.syaniclauncher/config.yml)
 	// even if use changes app_dir, config will always be here
-	configPath := filepath.Join(defaultAppDir, "config.json")
+	configPath := filepath.Join(defaultAppDir, "config.yml")
 
 	// create directory if missing
 	if err = os.MkdirAll(defaultAppDir, 0755); err != nil {
@@ -81,21 +77,14 @@ func InitConfig(appContext context.Context) (*Config, error) {
 	}
 
 	config := DefaultConfig() //start with default
-	configData, err := os.ReadFile(configPath)
-
-	if os.IsNotExist(err) {
-		// Config doesn't exist, keep defaults.
-	} else if err != nil {
-		// Config exists but can't be read.
-		quarantine(configPath)
-	} else if err := json.Unmarshal(configData, &config); err != nil { //json.unmarshal here reads config data and writes it into out config struct
-		// Config exists but contains invalid JSON.
+	exists, err := helpers_yml.Read(configPath, &config)
+	if exists && err != nil {
 		quarantine(configPath)
 		config = DefaultConfig()
 	}
 
 	// if saved app_dir can't be used, fall back to the default app dir,
-	// leaving every other field untouched & the json itself is valid,
+	// leaving every other field untouched & the yml itself is valid,
 	// so just rewrite it instead of quarantining
 
 	// note: paths are saved with double slashes like ("G:\\test"), otherwise it decodes

@@ -1,15 +1,12 @@
 package launcher_accounts
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
-	"time"
 
 	"syaniclauncher/src/helpers"
-
-	"gopkg.in/yaml.v3"
+	"syaniclauncher/src/helpers_yml"
 )
 
 const accountsNote = "# DO NOT SHARE THIS FILE. IT HOLDS LOGIN CREDENTIALS THAT CAN ACCESS YOUR MINECRAFT ACCOUNT.\n"
@@ -32,19 +29,15 @@ func load() (accountFile, error) {
 	if err != nil {
 		return accountFile{}, err
 	}
-	data, err := os.ReadFile(path)
-	if errors.Is(err, os.ErrNotExist) {
+
+	var accounts accountFile
+	exists, err := helpers_yml.Read(path, &accounts)
+	if !exists {
 		return accountFile{Accounts: []Account{}}, nil
 	}
 	if err != nil {
-		return accountFile{}, err
-	}
-
-	var accounts accountFile
-	if err := yaml.Unmarshal(data, &accounts); err != nil {
-		backupPath := fmt.Sprintf("%s.%d.corrupt", path, time.Now().UnixNano())
-		if err := os.Rename(path, backupPath); err != nil {
-			helpers.WarnLauncherLog(fmt.Sprintf("[ACCOUNTS] corrupt file could not be kept aside: %v", err))
+		if backupPath, quarantineErr := helpers_yml.Quarantine(path); quarantineErr != nil {
+			helpers.WarnLauncherLog(fmt.Sprintf("[ACCOUNTS] corrupt file could not be kept aside: %v", quarantineErr))
 		} else {
 			helpers.WarnLauncherLog(fmt.Sprintf("[ACCOUNTS] corrupt file moved to %s", backupPath))
 		}
@@ -61,17 +54,11 @@ func save(accounts accountFile) error {
 	if err != nil {
 		return err
 	}
-	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
-		return err
-	}
-	data, err := yaml.Marshal(accounts)
+	data, err := helpers_yml.Marshal(accounts)
 	if err != nil {
 		return err
 	}
-	if err := os.WriteFile(path, append([]byte(accountsNote), data...), 0600); err != nil {
-		return err
-	}
-	return os.Chmod(path, 0600)
+	return helpers_yml.Write(path, append([]byte(accountsNote), data...), 0600)
 }
 
 func find(accounts *accountFile, accountUUID string) *Account {
